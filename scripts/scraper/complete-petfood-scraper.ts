@@ -111,10 +111,12 @@ function mapProductToPetFood(product: ThePetFoodIndexProduct) {
                    FoodType.DRY_KIBBLE;
   
   // Determine lifestage (default to ADULT, would need parsing product name for better accuracy)
-  let lifestage = Lifestage.ADULT;
+  let lifestage: Lifestage = Lifestage.ADULT;
   const productNameLower = product.name.toLowerCase();
-  if (productNameLower.includes('puppy') || productNameLower.includes('kitten')) {
-    lifestage = product.type === 'dog' ? Lifestage.PUPPY : Lifestage.KITTEN;
+  if (product.type === 'dog' && productNameLower.includes('puppy')) {
+    lifestage = Lifestage.PUPPY;
+  } else if (product.type === 'cat' && productNameLower.includes('kitten')) {
+    lifestage = Lifestage.KITTEN;
   } else if (productNameLower.includes('senior')) {
     lifestage = Lifestage.SENIOR;
   } else if (productNameLower.includes('all life') || productNameLower.includes('all ages')) {
