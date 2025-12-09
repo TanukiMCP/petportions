@@ -62,7 +62,7 @@ export function searchCachedFoods(query: string, species?: 'dog' | 'cat'): PetFo
     );
   }
 
-  return results.slice(0, 50); // Limit to 50 results
+  return results; // Return all matching results
 }
 
 export function clearCache() {
