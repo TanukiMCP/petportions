@@ -52,12 +52,44 @@ export function FoodSearchAsync({
   const [error, setError] = React.useState<string | null>(null);
   const [hasSearched, setHasSearched] = React.useState(false);
 
+  // Load initial popular foods when dropdown opens
+  React.useEffect(() => {
+    if (open && foods.length === 0 && searchTerm.length === 0 && !hasSearched) {
+      setLoading(true);
+      searchPetFoodsFromDB("", species, 1, 20)
+        .then((result) => {
+          console.log('Initial load:', result.length, 'foods');
+          setFoods(result);
+          setHasSearched(true);
+          setError(null);
+        })
+        .catch((err) => {
+          console.error('Initial load error:', err);
+          setError(err instanceof Error ? err.message : 'Failed to load foods');
+          setHasSearched(true);
+        })
+        .finally(() => setLoading(false));
+    }
+  }, [open, species, foods.length, searchTerm.length, hasSearched]);
+
   // Debounced search effect
   React.useEffect(() => {
     // Don't search if term is too short
-    if (searchTerm.length < 2) {
-      setFoods([]);
-      setHasSearched(false);
+    if (searchTerm.length < 1) {
+      // Reset to initial state when cleared
+      if (open && searchTerm.length === 0) {
+        setLoading(true);
+        searchPetFoodsFromDB("", species, 1, 20)
+          .then((result) => {
+            console.log('Reset to initial:', result.length, 'foods');
+            setFoods(result);
+          })
+          .catch((err) => {
+            console.error('Reset error:', err);
+            setError(err instanceof Error ? err.message : 'Failed to load foods');
+          })
+          .finally(() => setLoading(false));
+      }
       return;
     }
 
@@ -67,10 +99,12 @@ export function FoodSearchAsync({
     // Debounce timer
     const timer = setTimeout(async () => {
       try {
+        console.log('Searching for:', searchTerm);
         const result = await searchPetFoodsFromDB(searchTerm, species);
+        console.log('Search results:', result.length, 'foods');
         setFoods(result);
         setHasSearched(true);
-        setError(null); // Clear any previous errors
+        setError(null);
       } catch (err) {
         console.error('Pet food search error:', err);
         const errorMessage = err instanceof Error 
@@ -80,14 +114,14 @@ export function FoodSearchAsync({
           : 'Failed to search. Please try again.';
         setError(errorMessage);
         setFoods([]);
-        setHasSearched(true); // Mark as searched so we show error state
+        setHasSearched(true);
       } finally {
         setLoading(false);
       }
-    }, 500); // 500ms debounce
+    }, 300); // 300ms debounce
 
     return () => clearTimeout(timer);
-  }, [searchTerm, species]);
+  }, [searchTerm, species, open]);
 
   const handleRetry = () => {
     setError(null);
@@ -152,28 +186,20 @@ export function FoodSearchAsync({
             {!loading && !error && !hasSearched && searchTerm.length === 0 && (
               <div className="flex flex-col items-center justify-center py-8 px-4 text-center text-muted-foreground">
                 <Search className="h-8 w-8 mb-2 opacity-50" />
-                <p className="text-sm">Start typing to search for pet foods</p>
+                <p className="text-sm">Loading pet foods...</p>
                 <p className="text-xs mt-1">Search by brand name or product</p>
               </div>
             )}
 
-            {/* Empty State - Search Too Short */}
-            {!loading && !error && searchTerm.length > 0 && searchTerm.length < 2 && (
-              <div className="flex flex-col items-center justify-center py-8 px-4 text-center text-muted-foreground">
-                <Search className="h-8 w-8 mb-2 opacity-50" />
-                <p className="text-sm">Type at least 2 characters to search</p>
-              </div>
-            )}
-
             {/* Empty State - No Results */}
-            {!loading && !error && hasSearched && foods.length === 0 && searchTerm.length >= 2 && (
+            {!loading && !error && hasSearched && foods.length === 0 && (
               <CommandEmpty>
                 <div className="flex flex-col items-center justify-center py-4 text-center">
                   <p className="text-sm text-muted-foreground mb-1">
-                    No pet foods found for "{searchTerm}"
+                    {searchTerm ? `No pet foods found for "${searchTerm}"` : 'No pet foods available'}
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    Try different search terms or check spelling
+                    {searchTerm ? 'Try different search terms or check spelling' : 'Database may be empty'}
                   </p>
                 </div>
               </CommandEmpty>
