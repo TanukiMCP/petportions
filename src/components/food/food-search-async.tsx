@@ -17,7 +17,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { searchPetFoodsFromDB } from "@/lib/actions/db-petfood-actions";
+import { getCachedPetFoods, searchCachedFoods } from "@/lib/cache/petfood-cache";
 import type { PetFood } from "@/lib/types/food";
 import type { PetSpecies } from "@/lib/types/openpetfood-api";
 
@@ -52,76 +52,37 @@ export function FoodSearchAsync({
   const [error, setError] = React.useState<string | null>(null);
   const [hasSearched, setHasSearched] = React.useState(false);
 
-  // Load initial popular foods when dropdown opens
+  // Load all pet foods on first open - INSTANT after first load!
   React.useEffect(() => {
-    if (open && foods.length === 0 && searchTerm.length === 0 && !hasSearched) {
+    if (open && !hasSearched) {
       setLoading(true);
-      searchPetFoodsFromDB("", species, 1, 20)
-        .then((result) => {
-          console.log('Initial load:', result.length, 'foods');
-          setFoods(result);
+      getCachedPetFoods()
+        .then(() => {
+          // Perform initial search with cached data
+          const results = searchCachedFoods(searchTerm, species);
+          console.log('Loaded from cache:', results.length, 'foods');
+          setFoods(results);
           setHasSearched(true);
           setError(null);
         })
         .catch((err) => {
-          console.error('Initial load error:', err);
+          console.error('Failed to load pet foods:', err);
           setError(err instanceof Error ? err.message : 'Failed to load foods');
           setHasSearched(true);
         })
         .finally(() => setLoading(false));
     }
-  }, [open, species, foods.length, searchTerm.length, hasSearched]);
+  }, [open, hasSearched, searchTerm, species]);
 
-  // Debounced search effect
+  // Instant search effect using cached data - NO DEBOUNCE NEEDED!
   React.useEffect(() => {
-    // Don't search if term is too short
-    if (searchTerm.length < 1) {
-      // Reset to initial state when cleared
-      if (open && searchTerm.length === 0) {
-        setLoading(true);
-        searchPetFoodsFromDB("", species, 1, 20)
-          .then((result) => {
-            console.log('Reset to initial:', result.length, 'foods');
-            setFoods(result);
-          })
-          .catch((err) => {
-            console.error('Reset error:', err);
-            setError(err instanceof Error ? err.message : 'Failed to load foods');
-          })
-          .finally(() => setLoading(false));
-      }
-      return;
-    }
+    if (!hasSearched) return; // Wait for initial load
 
-    setLoading(true);
-    setError(null);
-
-    // Debounce timer
-    const timer = setTimeout(async () => {
-      try {
-        console.log('Searching for:', searchTerm);
-        const result = await searchPetFoodsFromDB(searchTerm, species);
-        console.log('Search results:', result.length, 'foods');
-        setFoods(result);
-        setHasSearched(true);
-        setError(null);
-      } catch (err) {
-        console.error('Pet food search error:', err);
-        const errorMessage = err instanceof Error 
-          ? err.message.includes('Database connection error') 
-            ? 'Unable to connect to database. Please check your connection and try again.'
-            : err.message
-          : 'Failed to search. Please try again.';
-        setError(errorMessage);
-        setFoods([]);
-        setHasSearched(true);
-      } finally {
-        setLoading(false);
-      }
-    }, 300); // 300ms debounce
-
-    return () => clearTimeout(timer);
-  }, [searchTerm, species, open]);
+    // Instant search using client-side cached data
+    const results = searchCachedFoods(searchTerm, species);
+    console.log('Instant search:', searchTerm, '→', results.length, 'results');
+    setFoods(results);
+  }, [searchTerm, species, hasSearched]);
 
   const handleRetry = () => {
     setError(null);
