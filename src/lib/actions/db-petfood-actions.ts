@@ -95,9 +95,9 @@ export async function searchPetFoodsFromDB(
       source: 'custom' as const,
       api_url: dbFood.sourceUrl ?? undefined,
       
-      // Timestamps
-      created_at: dbFood.createdAt,
-      updated_at: dbFood.updatedAt,
+      // Timestamps (convert to ISO strings for serialization)
+      created_at: dbFood.createdAt ? new Date(dbFood.createdAt) : undefined,
+      updated_at: dbFood.updatedAt ? new Date(dbFood.updatedAt) : undefined,
     }));
   } catch (error) {
     console.error('Error searching pet foods from DB:', error);
@@ -150,8 +150,8 @@ export async function getPetFoodByIdFromDB(id: string): Promise<PetFood | null> 
       completeness: 100,
       source: 'custom' as const,
       api_url: dbFood.sourceUrl ?? undefined,
-      created_at: dbFood.createdAt,
-      updated_at: dbFood.updatedAt,
+      created_at: dbFood.createdAt ? new Date(dbFood.createdAt) : undefined,
+      updated_at: dbFood.updatedAt ? new Date(dbFood.updatedAt) : undefined,
     };
   } catch (error) {
     console.error('Error getting pet food by ID from DB:', error);

@@ -6,6 +6,7 @@
 
 [build.environment]
   NODE_VERSION = "22"
+  DATABASE_URL = "mongodb+srv://actionjax4_db_user:tqr2Emfq0PpLz3ZP@petportions.qheq7lj.mongodb.net/petportions?retryWrites=true&w=majority&appName=petportions"
 
 # Scheduled Functions
 [functions]
