@@ -58,10 +58,7 @@ export function FoodSearchAsync({
       setLoading(true);
       getCachedPetFoods()
         .then(() => {
-          // Perform initial search with cached data
-          const results = searchCachedFoods(searchTerm, species);
-          console.log('Loaded from cache:', results.length, 'foods');
-          setFoods(results);
+          console.log('Pet foods loaded into cache');
           setHasSearched(true);
           setError(null);
         })
@@ -72,7 +69,7 @@ export function FoodSearchAsync({
         })
         .finally(() => setLoading(false));
     }
-  }, [open, hasSearched, searchTerm, species]);
+  }, [open, hasSearched]);
 
   // Instant search effect using cached data - NO DEBOUNCE NEEDED!
   React.useEffect(() => {
