@@ -8,10 +8,21 @@ import { prisma } from '@/lib/db/prisma';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 3600; // Cache for 1 hour
+export const maxDuration = 10; // Serverless function timeout (seconds)
 
 export async function GET() {
+  console.log('[API] /api/petfoods - Starting request');
+  const startTime = Date.now();
+
   try {
-    const foods = await prisma.petFood.findMany({
+    console.log('[API] Connecting to database...');
+    
+    // Add a timeout to the Prisma query
+    const timeoutPromise = new Promise((_, reject) => 
+      setTimeout(() => reject(new Error('Database query timeout')), 8000)
+    );
+
+    const queryPromise = prisma.petFood.findMany({
       select: {
         id: true,
         brand: true,
@@ -26,7 +37,12 @@ export async function GET() {
         { brand: 'asc' },
         { productName: 'asc' },
       ],
+      take: 5000, // Limit to 5000 foods to avoid memory issues
     });
+
+    const foods = await Promise.race([queryPromise, timeoutPromise]) as any[];
+    
+    console.log(`[API] Found ${foods.length} pet foods in ${Date.now() - startTime}ms`);
 
     // Transform to simple format for client
     const simpleFoods = foods.map(f => ({
@@ -42,17 +58,28 @@ export async function GET() {
       source: 'custom' as const,
     }));
 
+    console.log(`[API] Transformed foods in ${Date.now() - startTime}ms`);
+
     return NextResponse.json(simpleFoods, {
       headers: {
         'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=7200',
       },
     });
   } catch (error) {
-    console.error('Error fetching pet foods:', error);
+    const elapsed = Date.now() - startTime;
+    console.error(`[API] Error after ${elapsed}ms:`, error);
+    
     return NextResponse.json(
-      { error: 'Failed to fetch pet foods' },
+      { 
+        error: 'Failed to fetch pet foods',
+        message: error instanceof Error ? error.message : 'Unknown error',
+        elapsed 
+      },
       { status: 500 }
     );
+  } finally {
+    // Disconnect Prisma to free up resources in serverless
+    await prisma.$disconnect().catch(e => console.error('[API] Disconnect error:', e));
   }
 }
 
