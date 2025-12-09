@@ -17,12 +17,22 @@ export async function GET() {
   try {
     console.log('[API] Connecting to database...');
     
-    // Add a timeout to the Prisma query
-    const timeoutPromise = new Promise((_, reject) => 
-      setTimeout(() => reject(new Error('Database query timeout')), 8000)
-    );
+    // First, get a count to see how much data we're dealing with
+    const count = await prisma.petFood.count();
+    console.log(`[API] Total pet foods in DB: ${count}`);
 
-    const queryPromise = prisma.petFood.findMany({
+    // If no data, return empty array
+    if (count === 0) {
+      console.log('[API] No pet foods found in database');
+      return NextResponse.json([], {
+        headers: {
+          'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=7200',
+        },
+      });
+    }
+
+    // Fetch with a reasonable limit and only essential fields
+    const foods = await prisma.petFood.findMany({
       select: {
         id: true,
         brand: true,
@@ -37,10 +47,8 @@ export async function GET() {
         { brand: 'asc' },
         { productName: 'asc' },
       ],
-      take: 5000, // Limit to 5000 foods to avoid memory issues
+      take: 1000, // Limit to first 1000 for performance
     });
-
-    const foods = await Promise.race([queryPromise, timeoutPromise]) as any[];
     
     console.log(`[API] Found ${foods.length} pet foods in ${Date.now() - startTime}ms`);
 
@@ -58,7 +66,7 @@ export async function GET() {
       source: 'custom' as const,
     }));
 
-    console.log(`[API] Transformed foods in ${Date.now() - startTime}ms`);
+    console.log(`[API] Transformed ${simpleFoods.length} foods in ${Date.now() - startTime}ms`);
 
     return NextResponse.json(simpleFoods, {
       headers: {
