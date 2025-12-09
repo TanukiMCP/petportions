@@ -297,7 +297,7 @@ export function CalculatorResultsVisualization({
                       <p className="text-sm text-muted-foreground">Per Meal</p>
                       <p className="text-2xl font-bold">{portionResult.cupsPerMealRounded}</p>
                       <p className="text-xs text-muted-foreground">
-                        {portionResult.gramsPerMealRounded}g ({portionResult.perMealKcal} kcal)
+                        {portionResult.gramsPerMealRounded}g ({result.perMealKcal} kcal)
                       </p>
                     </div>
                   </div>
