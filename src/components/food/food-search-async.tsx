@@ -17,7 +17,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { searchPetFoods } from "@/lib/actions/petfood-actions";
+import { searchPetFoodsFromDB } from "@/lib/actions/db-petfood-actions";
 import type { PetFood } from "@/lib/types/food";
 import type { PetSpecies } from "@/lib/types/openpetfood-api";
 
@@ -67,15 +67,9 @@ export function FoodSearchAsync({
     // Debounce timer
     const timer = setTimeout(async () => {
       try {
-        const result = await searchPetFoods(searchTerm, species);
-        
-        if (result.success) {
-          setFoods(result.data);
-          setHasSearched(true);
-        } else {
-          setError(result.error);
-          setFoods([]);
-        }
+        const result = await searchPetFoodsFromDB(searchTerm, species);
+        setFoods(result);
+        setHasSearched(true);
       } catch (err) {
         setError('Failed to search. Please try again.');
         setFoods([]);
