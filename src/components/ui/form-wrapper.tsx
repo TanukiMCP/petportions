@@ -22,7 +22,7 @@ const formVariants = {
     opacity: 0,
     x: 50,
     transition: {
-      ease: "easeOut",
+      duration: 0.3,
     },
   },
 };
