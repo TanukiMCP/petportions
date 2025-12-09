@@ -45,26 +45,16 @@ export async function searchFDARecalls(params: FDARecallSearchParams = {}): Prom
     } = params;
     
     // Build search query
-    const searchParts: string[] = [];
+    let searchQuery: string;
     
-    // Filter for pet food specifically (search for dog or cat in product description)
-    searchParts.push('(product_description:dog+OR+product_description:cat+OR+product_description:pet)');
-    
-    // Add search term if provided
     if (searchTerm && searchTerm.trim()) {
-      // Search in product description or recalling firm
+      // Search for specific term in product description or firm
       const escapedTerm = searchTerm.replace(/[:"]/g, '');
-      searchParts.push(`(product_description:${escapedTerm}+OR+recalling_firm:${escapedTerm})`);
+      searchQuery = `product_description:${escapedTerm}`;
+    } else {
+      // Just search for dog or cat foods
+      searchQuery = 'product_description:dog';
     }
-    
-    // Add date range if provided
-    if (dateFrom || dateTo) {
-      const from = dateFrom || '1900-01-01';
-      const to = dateTo || new Date().toISOString().split('T')[0];
-      searchParts.push(`recall_initiation_date:[${from}+TO+${to}]`);
-    }
-    
-    const searchQuery = searchParts.join('+AND+');
     
     // Build full URL
     const url = new URL(FDA_API_BASE);

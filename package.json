@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "scrape": "tsx scripts/scraper/complete-petfood-scraper.ts"
+    "scrape": "tsx scripts/scraper/complete-petfood-scraper.ts",
+    "scrape:recalls": "tsx scripts/scraper/fda-recall-scraper.ts"
   },
   "dependencies": {
     "@fullcalendar/core": "^6.1.19",

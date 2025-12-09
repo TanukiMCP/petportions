@@ -1,0 +1,38 @@
+# Netlify Configuration for PetPortions.com
+
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+# Scheduled Functions
+[functions]
+  node_bundler = "esbuild"
+  
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+# Pet Food Scraper - Runs weekly on Sundays at 2 AM UTC
+[functions."scrape-pet-foods"]
+  schedule = "0 2 * * 0"
+  
+# FDA Recall Scraper - Runs daily at 6 AM UTC  
+[functions."scrape-recalls"]
+  schedule = "0 6 * * *"
+
+# Redirects and Headers
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+  
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    X-XSS-Protection = "1; mode=block"
+
