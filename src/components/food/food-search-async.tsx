@@ -70,9 +70,17 @@ export function FoodSearchAsync({
         const result = await searchPetFoodsFromDB(searchTerm, species);
         setFoods(result);
         setHasSearched(true);
+        setError(null); // Clear any previous errors
       } catch (err) {
-        setError('Failed to search. Please try again.');
+        console.error('Pet food search error:', err);
+        const errorMessage = err instanceof Error 
+          ? err.message.includes('Database connection error') 
+            ? 'Unable to connect to database. Please check your connection and try again.'
+            : err.message
+          : 'Failed to search. Please try again.';
+        setError(errorMessage);
         setFoods([]);
+        setHasSearched(true); // Mark as searched so we show error state
       } finally {
         setLoading(false);
       }
@@ -108,7 +116,7 @@ export function FoodSearchAsync({
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-full min-w-[400px] p-0" align="start">
+      <PopoverContent className="w-[400px] p-0" align="start" sideOffset={4}>
         <Command shouldFilter={false}>
           <CommandInput 
             placeholder="Type to search (e.g., 'royal canin')..." 

@@ -101,7 +101,11 @@ export async function searchPetFoodsFromDB(
     }));
   } catch (error) {
     console.error('Error searching pet foods from DB:', error);
-    return [];
+    // Re-throw with a more user-friendly message
+    const errorMessage = error instanceof Error 
+      ? error.message 
+      : 'Database connection error. Please try again.';
+    throw new Error(`Failed to search pet foods: ${errorMessage}`);
   }
 }
 
