@@ -1,0 +1,209 @@
+/* PetPortions Spacing System */
+/* Based on 4px base unit for consistent spacing throughout the application */
+
+/* Spacing Scale - Using Tailwind's spacing scale as base */
+/* 0 = 0px, 1 = 4px, 2 = 8px, 3 = 12px, 4 = 16px, 5 = 20px, 6 = 24px, 8 = 32px, 10 = 40px, 12 = 48px, 16 = 64px, 20 = 80px, 24 = 96px */
+
+/* Section Spacing - For major page sections */
+.section-spacing {
+  @apply py-16 md:py-24;
+}
+
+.section-spacing-sm {
+  @apply py-12 md:py-16;
+}
+
+.section-spacing-lg {
+  @apply py-20 md:py-32;
+}
+
+/* Container Spacing - For content containers */
+.container-spacing {
+  @apply px-4 sm:px-6 lg:px-8;
+}
+
+.container-spacing-sm {
+  @apply px-4;
+}
+
+.container-spacing-lg {
+  @apply px-6 lg:px-12;
+}
+
+/* Card Spacing - For card components */
+.card-spacing {
+  @apply p-6;
+}
+
+.card-spacing-sm {
+  @apply p-4;
+}
+
+.card-spacing-lg {
+  @apply p-8;
+}
+
+/* Content Spacing - For text and content blocks */
+.content-spacing {
+  @apply space-y-6;
+}
+
+.content-spacing-sm {
+  @apply space-y-4;
+}
+
+.content-spacing-lg {
+  @apply space-y-8;
+}
+
+/* Form Spacing - For form elements */
+.form-spacing {
+  @apply space-y-6;
+}
+
+.form-spacing-sm {
+  @apply space-y-4;
+}
+
+.form-spacing-lg {
+  @apply space-y-8;
+}
+
+/* Grid Spacing - For grid layouts */
+.grid-spacing {
+  @apply gap-6;
+}
+
+.grid-spacing-sm {
+  @apply gap-4;
+}
+
+.grid-spacing-lg {
+  @apply gap-8;
+}
+
+/* Stack Spacing - For vertical stacks */
+.stack-spacing {
+  @apply space-y-4;
+}
+
+.stack-spacing-sm {
+  @apply space-y-2;
+}
+
+.stack-spacing-lg {
+  @apply space-y-6;
+}
+
+/* Inline Spacing - For horizontal elements */
+.inline-spacing {
+  @apply gap-4;
+}
+
+.inline-spacing-sm {
+  @apply gap-2;
+}
+
+.inline-spacing-lg {
+  @apply gap-6;
+}
+
+/* Margin Utilities - For consistent margins */
+.mt-section {
+  @apply mt-16 md:mt-24;
+}
+
+.mt-section-sm {
+  @apply mt-12 md:mt-16;
+}
+
+.mt-section-lg {
+  @apply mt-20 md:mt-32;
+}
+
+.mb-section {
+  @apply mb-16 md:mb-24;
+}
+
+.mb-section-sm {
+  @apply mb-12 md:mb-16;
+}
+
+.mb-section-lg {
+  @apply mb-20 md:mb-32;
+}
+
+/* Padding Utilities - For consistent padding */
+.p-content {
+  @apply p-6;
+}
+
+.p-content-sm {
+  @apply p-4;
+}
+
+.p-content-lg {
+  @apply p-8;
+}
+
+/* Gap Utilities - For flex and grid */
+.gap-content {
+  @apply gap-6;
+}
+
+.gap-content-sm {
+  @apply gap-4;
+}
+
+.gap-content-lg {
+  @apply gap-8;
+}
+
+/* Spacing Documentation Classes */
+/* Use these for semantic spacing throughout the application */
+
+/* Page-level spacing */
+.page-spacing {
+  @apply space-y-8 md:space-y-12;
+}
+
+/* Component-level spacing */
+.component-spacing {
+  @apply space-y-4;
+}
+
+.component-spacing-sm {
+  @apply space-y-2;
+}
+
+.component-spacing-lg {
+  @apply space-y-6;
+}
+
+/* List spacing */
+.list-spacing {
+  @apply space-y-2;
+}
+
+.list-spacing-sm {
+  @apply space-y-1;
+}
+
+.list-spacing-lg {
+  @apply space-y-4;
+}
+
+/* Button group spacing */
+.button-group-spacing {
+  @apply gap-3;
+}
+
+.button-group-spacing-sm {
+  @apply gap-2;
+}
+
+.button-group-spacing-lg {
+  @apply gap-4;
+}
+
+

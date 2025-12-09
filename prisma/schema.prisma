@@ -1,0 +1,283 @@
+// Prisma Schema for PetPortions.com
+// This is your database schema file
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+// Pet Food Products (scraped from DogFoodAdvisor/CatFoodAdvisor)
+model PetFood {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  
+  // Basic Information
+  brand String
+  productName String
+  species Species
+  foodType FoodType
+  lifestage Lifestage
+  
+  // Source tracking
+  sourceUrl String @unique // Original review URL
+  scrapedAt DateTime @default(now())
+  lastVerified DateTime @default(now())
+  version Int @default(1) // Track formula changes
+  
+  // Rating from DogFoodAdvisor
+  rating Float? // e.g., 3.5 stars
+  
+  // AAFCO Compliance
+  aafcoProfile String? // e.g., "M" (Maintenance), "G" (Growth), "A" (All Life Stages)
+  
+  // Guaranteed Analysis (as reported on label)
+  proteinMin Float? // Minimum % protein
+  fatMin Float? // Minimum % fat
+  fiberMax Float? // Maximum % fiber
+  moistureMax Float? // Maximum % moisture
+  ashMax Float? // Maximum % ash
+  
+  // Dry Matter Basis (more accurate comparison)
+  proteinDmb Float? // % protein on dry matter basis
+  fatDmb Float? // % fat on dry matter basis
+  carbsDmb Float? // % carbs on dry matter basis (calculated)
+  fiberDmb Float? // % fiber on dry matter basis
+  
+  // Calorie Weighted Basis
+  proteinCalories Float? // % calories from protein
+  fatCalories Float? // % calories from fat
+  carbsCalories Float? // % calories from carbs
+  
+  // Caloric Content
+  kcalPerCup Float? // Kilocalories per cup
+  kcalPerKg Float? // Kilocalories per kilogram
+  kcalPer100g Float? // Kilocalories per 100g
+  
+  // Ingredients
+  ingredients String? // Full ingredients list
+  firstIngredient String? // First ingredient (usually primary protein)
+  
+  // Additional nutrients (if available)
+  calciumMin Float?
+  phosphorusMin Float?
+  omega3 Float?
+  omega6 Float?
+  
+  // Product details
+  packageSizes String? // e.g., "5 lb, 15 lb, 30 lb"
+  priceRange String? // e.g., "$40-60" (if available)
+  
+  // Metadata
+  discontinued Boolean @default(false)
+  notes String? // Any special notes or warnings
+  
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@index([species, lifestage])
+  @@index([brand])
+  @@index([rating])
+  @@map("pet_foods")
+}
+
+// Custom foods added by users (not scraped)
+model CustomFood {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  userId String // Owner of this custom food
+  
+  // Same basic structure as PetFood
+  brand String
+  productName String
+  species Species
+  foodType FoodType
+  lifestage Lifestage
+  
+  // User-entered nutritional data
+  proteinMin Float?
+  fatMin Float?
+  fiberMax Float?
+  moistureMax Float?
+  kcalPerCup Float?
+  kcalPerKg Float?
+  kcalPer100g Float?
+  ingredients String? 
+  
+  // Metadata
+  isPublic Boolean @default(false) // Allow sharing with community
+  notes String? 
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@index([userId])
+  @@map("custom_foods")
+}
+
+// Scraper job tracking
+model ScraperJob {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  
+  jobType ScraperJobType
+  status ScraperJobStatus @default(PENDING)
+  
+  startedAt DateTime?
+  completedAt DateTime?
+  
+  productsScraped Int @default(0)
+  productsUpdated Int @default(0)
+  productsFailed Int @default(0)
+  
+  errorLog String? 
+  
+  createdAt DateTime @default(now())
+  
+  @@map("scraper_jobs")
+}
+
+// Enums
+enum Species {
+  DOG
+  CAT
+}
+
+enum FoodType {
+  DRY_KIBBLE
+  WET_CANNED
+  RAW
+  FREEZE_DRIED
+  DEHYDRATED
+  FRESH
+  SEMI_MOIST
+}
+
+enum Lifestage {
+  PUPPY
+  KITTEN
+  ADULT
+  SENIOR
+  ALL_LIFE_STAGES
+}
+
+enum ScraperJobType {
+  FULL_SCRAPE
+  UPDATE_SCRAPE
+  VERIFY_SCRAPE
+}
+
+enum ScraperJobStatus {
+  PENDING
+  RUNNING
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+
+// AAFCO Nutrient Standards for nutritional adequacy analysis
+model AAFCOStandard {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  
+  species Species // DOG or CAT
+  lifestage Lifestage // PUPPY, KITTEN, ADULT, etc.
+  profile String // "Growth", "Maintenance", "All Life Stages", "Gestation/Lactation"
+  
+  // Minimum nutrient levels (per 1000 kcal ME)
+  proteinMinGPerKcal Float // Minimum protein in grams per 1000 kcal
+  fatMinGPerKcal Float // Minimum fat in grams per 1000 kcal
+  calciumMinGPerKcal Float
+  phosphorusMinGPerKcal Float
+  
+  // DMB minimums (as percentage)
+  proteinMinDmb Float
+  fatMinDmb Float
+  calciumMinDmb Float
+  phosphorusMinDmb Float
+  
+  // DMB maximums (where applicable)
+  calciumMaxDmb Float?
+  phosphorusMaxDmb Float?
+  
+  // Other essential nutrients (abbreviated - full AAFCO has 40+ nutrients)
+  sodiumMinDmb Float?
+  chlorideMinDmb Float?
+  magnesiumMinDmb Float?
+  potassiumMinDmb Float?
+  
+  // Vitamins (IU or mg per kg of diet DM)
+  vitaminAMinIU Float?
+  vitaminDMinIU Float?
+  vitaminEMinIU Float?
+  
+  // Reference and metadata
+  aafcoVersion String // e.g., "2024", "2023"
+  effectiveDate DateTime
+  sourceUrl String // Link to official AAFCO publication
+  notes String?
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@unique([species, lifestage, profile, aafcoVersion])
+  @@index([species, lifestage])
+  @@map("aafco_standards")
+}
+
+// Pet Food Recalls from FDA
+model PetFoodRecall {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  
+  // FDA recall identification
+  recallNumber String @unique // e.g., "V-012-2024"
+  recallDate DateTime // When the recall was announced
+  recallStatus String // "Ongoing", "Completed", "Terminated"
+  
+  // Product information
+  productNames String // List of affected products
+  brandName String
+  species Species? // DOG, CAT, or null if both/unclear
+  
+  // Company information
+  companyName String
+  companyCity String?
+  companyState String?
+  companyCountry String?
+  
+  // Recall details
+  reason String // Why the recall was issued
+  recallClass String // "Class I" (dangerous), "Class II" (moderate), "Class III" (minor)
+  hazardClassification String? // e.g., "Class I"
+  
+  // Contamination/issue details
+  contaminant String? // e.g., "Salmonella", "Listeria", "excessive Vitamin D"
+  healthRisk String? // Description of health risk
+  
+  // Distribution
+  distributionPattern String? // Where the product was distributed
+  quantity String? // Amount recalled
+  lotNumbers String? // Affected lot/batch numbers
+  
+  // FDA metadata
+  fdaReportUrl String? // Link to official FDA announcement
+  openFdaId String? // openFDA API ID if available
+  
+  // Matching to our database
+  matchedPetFoodIds String[] // Array of PetFood IDs that may be affected
+  matchConfidence Float? // 0-1 confidence in the match
+  
+  // Status tracking
+  resolved Boolean @default(false)
+  resolvedAt DateTime?
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@index([brandName])
+  @@index([species])
+  @@index([recallDate])
+  @@index([resolved])
+  @@map("pet_food_recalls")
+}
+

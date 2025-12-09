@@ -1,0 +1,68 @@
+
+> free-nextjs-admin-dashboard@2.2.1 scrape
+> tsx scripts/scraper/petfoodindex-scraper.ts
+
+🚀 Starting Pet Food Index Scraper...
+
+
+🐾 Scraping dog food catalog...
+📡 Loading animal selection page...
+🖱️  Clicking dog selection...
+📡 Navigating to food catalog...
+⏳ Waiting for products to load...
+
+❌ Scraping failed: TimeoutError: Waiting failed: 30000ms exceeded
+    at new WaitTask (C:\Users\ididi\OneDrive\Desktop\petportions.com\node_modules\puppeteer-core\src\common\WaitTask.ts:77:28)
+    at IsolatedWorld.waitForFunction (C:\Users\ididi\OneDrive\Desktop\petportions.com\node_modules\puppeteer-core\src\api\Realm.ts:74:22)
+    at CdpFrame.waitForFunction (C:\Users\ididi\OneDrive\Desktop\petportions.com\node_modules\puppeteer-core\src\api\Frame.ts:789:36)
+    at CdpFrame.<anonymous> (C:\Users\ididi\OneDrive\Desktop\petportions.com\node_modules\puppeteer-core\src\util\decorators.ts:63:21)
+    at CdpPage.waitForFunction (C:\Users\ididi\OneDrive\Desktop\petportions.com\node_modules\puppeteer-core\src\api\Page.ts:3119:29)
+    at scrapeSpeciesCatalog (C:\Users\ididi\OneDrive\Desktop\petportions.com\scripts\scraper\petfoodindex-scraper.ts:76:16)
+    at async main (C:\Users\ididi\OneDrive\Desktop\petportions.com\scripts\scraper\petfoodindex-scraper.ts:284:25)
+prisma:error 
+Invalid `prisma.scraperJob.create()` invocation in
+C:\Users\ididi\OneDrive\Desktop\petportions.com\scripts\scraper\petfoodindex-scraper.ts:318:29
+
+  315 console.error('\n❌ Scraping failed:', error);
+  316 
+  317 // Record failed job
+→ 318 await prisma.scraperJob.create({
+        data: {
+          source: "thepetfoodindex.com",
+          status: "failed",
+          error: "Waiting failed: 30000ms exceeded",
+          startedAt: new Date("2025-12-09T04:18:59.987Z"),
+          completedAt: new Date("2025-12-09T04:19:32.983Z"),
+      +   jobType: ScraperJobType
+        }
+      })
+
+Argument `jobType` is missing.
+
+❌ Script failed: PrismaClientValidationError: 
+Invalid `prisma.scraperJob.create()` invocation in
+C:\Users\ididi\OneDrive\Desktop\petportions.com\scripts\scraper\petfoodindex-scraper.ts:318:29
+
+  315 console.error('\n❌ Scraping failed:', error);
+  316 
+  317 // Record failed job
+→ 318 await prisma.scraperJob.create({
+        data: {
+          source: "thepetfoodindex.com",
+          status: "failed",
+          error: "Waiting failed: 30000ms exceeded",
+          startedAt: new Date("2025-12-09T04:18:59.987Z"),
+          completedAt: new Date("2025-12-09T04:19:32.983Z"),
+      +   jobType: ScraperJobType
+        }
+      })
+
+Argument `jobType` is missing.
+    at wn (C:\Users\ididi\OneDrive\Desktop\petportions.com\node_modules\@prisma\client\runtime\library.js:29:1363)
+    at $n.handleRequestError (C:\Users\ididi\OneDrive\Desktop\petportions.com\node_modules\@prisma\client\runtime\library.js:121:6958)
+    at $n.handleAndLogRequestError (C:\Users\ididi\OneDrive\Desktop\petportions.com\node_modules\@prisma\client\runtime\library.js:121:6623)
+    at $n.request (C:\Users\ididi\OneDrive\Desktop\petportions.com\node_modules\@prisma\client\runtime\library.js:121:6307)
+    at async l (C:\Users\ididi\OneDrive\Desktop\petportions.com\node_modules\@prisma\client\runtime\library.js:130:9633)
+    at async main (C:\Users\ididi\OneDrive\Desktop\petportions.com\scripts\scraper\petfoodindex-scraper.ts:318:5) {
+  clientVersion: '5.22.0'
+}
