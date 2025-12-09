@@ -126,7 +126,7 @@ export default function SignInForm() {
               </Link>
             </div>
             <div>
-              <Button className="w-full py-3.5 text-body-md font-semibold" size="lg">
+              <Button className="w-full py-3.5 text-body-md font-semibold">
                 Sign in
               </Button>
             </div>
