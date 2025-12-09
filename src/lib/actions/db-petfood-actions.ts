@@ -64,7 +64,7 @@ export async function searchPetFoodsFromDB(
       // Caloric information (REQUIRED for calculator) - ALL products have this!
       kcalPerCup: dbFood.kcalPerCup || 0,
       kcalPerKg: dbFood.kcalPerKg || 0,
-      kcalPer100g: dbFood.kcalPer100g,
+      kcalPer100g: dbFood.kcalPer100g ?? undefined,
       
       // Guaranteed Analysis
       guaranteed_analysis: {
@@ -76,24 +76,24 @@ export async function searchPetFoodsFromDB(
       
       // Extended nutritional data (calculated)
       nutrients: {
-        protein: dbFood.proteinDmb,
-        fat: dbFood.fatDmb,
-        carbohydrates: dbFood.carbsDmb,
-        fiber: dbFood.fiberDmb,
-        moisture: dbFood.moistureMax,
+        protein: dbFood.proteinDmb ?? undefined,
+        fat: dbFood.fatDmb ?? undefined,
+        carbohydrates: dbFood.carbsDmb ?? undefined,
+        fiber: dbFood.fiberDmb ?? undefined,
+        moisture: dbFood.moistureMax ?? undefined,
       },
       
       // Ingredients
-      ingredients: dbFood.ingredients || undefined,
-      ingredients_list: dbFood.ingredients?.split(',').map(i => i.trim()),
+      ingredients: dbFood.ingredients ?? undefined,
+      ingredients_list: dbFood.ingredients ? dbFood.ingredients.split(',').map(i => i.trim()) : undefined,
       
-      // Images
-      image_url: dbFood.imageUrl || undefined,
+      // Images (not available in our schema)
+      image_url: undefined,
       
       // Meta
       completeness: 100, // Our data is complete!
       source: 'custom' as const,
-      api_url: dbFood.sourceUrl,
+      api_url: dbFood.sourceUrl ?? undefined,
       
       // Timestamps
       created_at: dbFood.createdAt,
@@ -126,7 +126,7 @@ export async function getPetFoodByIdFromDB(id: string): Promise<PetFood | null> 
       lifestage: dbFood.lifestage.toLowerCase().replace('_', ' '),
       kcalPerCup: dbFood.kcalPerCup || 0,
       kcalPerKg: dbFood.kcalPerKg || 0,
-      kcalPer100g: dbFood.kcalPer100g,
+      kcalPer100g: dbFood.kcalPer100g ?? undefined,
       guaranteed_analysis: {
         protein_min: dbFood.proteinMin || 0,
         fat_min: dbFood.fatMin || 0,
@@ -134,18 +134,18 @@ export async function getPetFoodByIdFromDB(id: string): Promise<PetFood | null> 
         moisture_max: dbFood.moistureMax || 0,
       },
       nutrients: {
-        protein: dbFood.proteinDmb,
-        fat: dbFood.fatDmb,
-        carbohydrates: dbFood.carbsDmb,
-        fiber: dbFood.fiberDmb,
-        moisture: dbFood.moistureMax,
+        protein: dbFood.proteinDmb ?? undefined,
+        fat: dbFood.fatDmb ?? undefined,
+        carbohydrates: dbFood.carbsDmb ?? undefined,
+        fiber: dbFood.fiberDmb ?? undefined,
+        moisture: dbFood.moistureMax ?? undefined,
       },
-      ingredients: dbFood.ingredients || undefined,
-      ingredients_list: dbFood.ingredients?.split(',').map(i => i.trim()),
-      image_url: dbFood.imageUrl || undefined,
+      ingredients: dbFood.ingredients ?? undefined,
+      ingredients_list: dbFood.ingredients ? dbFood.ingredients.split(',').map(i => i.trim()) : undefined,
+      image_url: undefined,
       completeness: 100,
       source: 'custom' as const,
-      api_url: dbFood.sourceUrl,
+      api_url: dbFood.sourceUrl ?? undefined,
       created_at: dbFood.createdAt,
       updated_at: dbFood.updatedAt,
     };
