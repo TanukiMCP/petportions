@@ -4,7 +4,7 @@
 
 @theme {
   --font-*: initial;
-  --font-outfit: Outfit, sans-serif;
+  --font-montserrat: Montserrat, sans-serif;
 
   --breakpoint-*: initial;
   --breakpoint-2xsm: 375px;
@@ -37,6 +37,20 @@
   --color-transparent: transparent;
   --color-white: #ffffff;
   --color-black: #101828;
+  
+  /* Primary colors for utility class generation - Tailwind v4 format */
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-tertiary: hsl(var(--tertiary));
+  --color-tertiary-foreground: hsl(var(--tertiary-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
 
   /* PetPortions Orange Theme - Override TailAdmin Blue */
   --color-brand-25: #fffaf5;
@@ -179,36 +193,36 @@
 @layer base {
   :root {
     /* shadcn/ui CSS Variables - Professional Teal + Navy Theme */
-    --background: 0 0% 100%;
+    --background: 38 55% 96%;
     --foreground: 215 25% 20%;
     --card: 0 0% 100%;
     --card-foreground: 215 25% 20%;
     --popover: 0 0% 100%;
     --popover-foreground: 215 25% 20%;
-    /* Primary: Deep Teal - professional, trustworthy, veterinary */
-    --primary: 180 55% 40%;
+    /* Primary: Rich Red-Orange */
+    --primary: 12 85% 52%;
     --primary-foreground: 0 0% 100%;
-    /* Secondary: Dark Navy - strong, readable */
-    --secondary: 215 30% 30%;
+    /* Secondary: Deep Slate - professional, trustworthy */
+    --secondary: 215 25% 27%;
     --secondary-foreground: 0 0% 100%;
-    /* Tertiary: Very light blue-gray background */
-    --tertiary: 210 25% 97%;
+    /* Tertiary: Warm off-white background */
+    --tertiary: 38 45% 94%;
     --tertiary-foreground: 215 25% 20%;
-    --muted: 210 20% 90%;
-    --muted-foreground: 215 15% 50%;
-    --accent: 180 60% 45%;
+    --muted: 38 25% 86%;
+    --muted-foreground: 215 15% 45%;
+    --accent: 12 80% 56%;
     --accent-foreground: 0 0% 100%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 100%;
     --border: 215 25% 20%;
     --input: 215 25% 20%;
-    --ring: 180 55% 40%;
+    --ring: 12 85% 52%;
     --radius: 0.5rem;
-    --chart-1: 180 60% 45%;
-    --chart-2: 160 55% 50%;
-    --chart-3: 140 50% 55%;
-    --chart-4: 200 65% 50%;
-    --chart-5: 220 70% 55%;
+    --chart-1: 12 80% 56%;
+    --chart-2: 22 80% 54%;
+    --chart-3: 32 78% 52%;
+    --chart-4: 42 70% 48%;
+    --chart-5: 52 60% 45%;
   }
 
   .dark {
@@ -218,29 +232,29 @@
     --card-foreground: 0 0% 95%;
     --popover: 215 25% 12%;
     --popover-foreground: 0 0% 95%;
-    /* Primary: Brighter Teal for dark mode */
-    --primary: 180 60% 50%;
+    /* Primary: Teal for dark mode (intentional) */
+    --primary: 180 55% 45%;
     --primary-foreground: 0 0% 100%;
-    /* Secondary: Lighter Navy for dark mode */
-    --secondary: 215 25% 70%;
+    /* Secondary: Lighter Slate for dark mode */
+    --secondary: 215 20% 65%;
     --secondary-foreground: 215 30% 10%;
-    /* Tertiary: Dark blue-gray background */
-    --tertiary: 215 25% 15%;
+    /* Tertiary: Dark warm background */
+    --tertiary: 215 25% 12%;
     --tertiary-foreground: 0 0% 95%;
     --muted: 215 20% 20%;
     --muted-foreground: 210 15% 60%;
-    --accent: 180 55% 55%;
+    --accent: 180 55% 50%;
     --accent-foreground: 0 0% 100%;
     --destructive: 0 75% 55%;
     --destructive-foreground: 0 0% 100%;
     --border: 215 25% 35%;
     --input: 215 25% 35%;
-    --ring: 180 60% 50%;
-    --chart-1: 180 60% 55%;
-    --chart-2: 160 55% 60%;
-    --chart-3: 140 50% 65%;
-    --chart-4: 200 65% 60%;
-    --chart-5: 220 70% 65%;
+    --ring: 180 55% 45%;
+    --chart-1: 12 80% 62%;
+    --chart-2: 22 78% 58%;
+    --chart-3: 32 75% 54%;
+    --chart-4: 42 65% 50%;
+    --chart-5: 52 55% 46%;
   }
 
   *,
@@ -255,8 +269,8 @@
     cursor: pointer;
   }
   body {
-    @apply relative font-normal font-outfit z-1;
-    background-color: hsl(var(--tertiary));
+    @apply relative font-normal font-montserrat z-1;
+    background-color: hsl(var(--background));
   }
 }
 
@@ -265,23 +279,23 @@
 }
 
 @utility menu-item-active {
-  @apply bg-orange-50 text-orange-600 dark:bg-orange-900/30 dark:text-orange-400;
+  @apply bg-primary/10 text-primary dark:bg-primary/20 dark:text-primary;
 }
 
 @utility menu-item-inactive {
-  @apply text-gray-700 hover:bg-orange-50 group-hover:text-orange-600 dark:text-gray-300 dark:hover:bg-orange-950/30 dark:hover:text-orange-400;
+  @apply text-gray-700 hover:bg-primary/10 group-hover:text-primary dark:text-gray-300 dark:hover:bg-primary/20 dark:hover:text-primary;
 }
 
 @utility menu-item-icon {
-  @apply text-gray-500 group-hover:text-orange-600 dark:text-gray-400 dark:group-hover:text-orange-400;
+  @apply text-gray-500 group-hover:text-primary dark:text-gray-400 dark:group-hover:text-primary;
 }
 
 @utility menu-item-icon-active {
-  @apply text-orange-600 dark:text-orange-400;
+  @apply text-primary;
 }
 
 @utility menu-item-icon-inactive {
-  @apply text-gray-500 group-hover:text-orange-600 dark:text-gray-400 dark:group-hover:text-orange-400;
+  @apply text-gray-500 group-hover:text-primary dark:text-gray-400 dark:group-hover:text-primary;
 }
 
 @utility menu-item-arrow {
@@ -289,11 +303,11 @@
 }
 
 @utility menu-item-arrow-active {
-  @apply rotate-180 text-orange-600 dark:text-orange-400;
+  @apply rotate-180 text-primary;
 }
 
 @utility menu-item-arrow-inactive {
-  @apply text-gray-500 group-hover:text-orange-600 dark:text-gray-400 dark:group-hover:text-orange-400;
+  @apply text-gray-500 group-hover:text-primary dark:text-gray-400 dark:group-hover:text-primary;
 }
 
 @utility menu-dropdown-item {
@@ -301,23 +315,23 @@
 }
 
 @utility menu-dropdown-item-active {
-  @apply bg-orange-50 text-orange-600 dark:bg-orange-900/30 dark:text-orange-400;
+  @apply bg-primary/10 text-primary dark:bg-primary/20 dark:text-primary;
 }
 
 @utility menu-dropdown-item-inactive {
-  @apply text-gray-700 hover:bg-orange-50 dark:text-gray-300 dark:hover:bg-orange-950/30;
+  @apply text-gray-700 hover:bg-primary/10 dark:text-gray-300 dark:hover:bg-primary/20;
 }
 
 @utility menu-dropdown-badge {
-  @apply block rounded-full px-2.5 py-0.5 text-xs font-medium uppercase text-orange-600 dark:text-orange-400;
+  @apply block rounded-full px-2.5 py-0.5 text-xs font-medium uppercase text-primary;
 }
 
 @utility menu-dropdown-badge-active {
-  @apply bg-orange-100 dark:bg-orange-900/50;
+  @apply bg-primary/15 dark:bg-primary/25;
 }
 
 @utility menu-dropdown-badge-inactive {
-  @apply bg-orange-50 group-hover:bg-orange-100 dark:bg-orange-950/30 dark:group-hover:bg-orange-900/50;
+  @apply bg-primary/10 group-hover:bg-primary/15 dark:bg-primary/20 dark:group-hover:bg-primary/25;
 }
 
 @utility no-scrollbar {

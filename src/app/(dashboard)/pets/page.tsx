@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -14,39 +14,16 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Plus, Eye, Pencil, Trash2 } from "lucide-react";
+import { usePetContext } from "@/context/PetContext";
+import { AddPetModal } from "@/components/pets/AddPetModal";
+import { EditPetModal } from "@/components/pets/EditPetModal";
 import type { Pet } from "@/lib/types/pet";
 
-const mockPets: Pet[] = [
-  {
-    id: '1',
-    name: 'Max',
-    species: 'dog',
-    breed: 'Golden Retriever',
-    currentWeight: 32,
-    targetWeight: 29,
-    weightUnit: 'kg',
-  },
-  {
-    id: '2',
-    name: 'Luna',
-    species: 'cat',
-    breed: 'Siamese',
-    currentWeight: 4.8,
-    targetWeight: 4.5,
-    weightUnit: 'kg',
-  },
-  {
-    id: '3',
-    name: 'Buddy',
-    species: 'dog',
-    breed: 'Labrador Retriever',
-    currentWeight: 28.5,
-    targetWeight: 26,
-    weightUnit: 'kg',
-  },
-];
-
 export default function PetsPage() {
+  const { pets, loading, deletePet } = usePetContext();
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [selectedPet, setSelectedPet] = useState<Pet | null>(null);
   return (
     <div>
       <PageBreadcrumb pageTitle="My Pets" />
@@ -57,17 +34,27 @@ export default function PetsPage() {
               <CardTitle className="text-primary dark:text-primary">My Pets</CardTitle>
               <CardDescription className="text-secondary dark:text-secondary">Manage your pets and track their progress</CardDescription>
             </div>
-            <Button className="bg-primary hover:bg-primary/90 text-white">
+            <Button 
+              onClick={() => setShowAddModal(true)}
+              className="bg-primary hover:bg-primary/90 text-white"
+            >
               <Plus className="mr-2 h-4 w-4" />
               Add Pet
             </Button>
           </div>
         </CardHeader>
         <CardContent>
-          {mockPets.length === 0 ? (
+          {loading ? (
+            <div className="text-center p-content-lg">
+              <p className="text-secondary dark:text-secondary">Loading pets...</p>
+            </div>
+          ) : pets.length === 0 ? (
             <div className="text-center p-content-lg">
               <p className="text-secondary dark:text-secondary mb-4">No pets added yet.</p>
-              <Button className="bg-primary hover:bg-primary/90 text-white">
+              <Button 
+                onClick={() => setShowAddModal(true)}
+                className="bg-primary hover:bg-primary/90 text-white"
+              >
                 <Plus className="mr-2 h-4 w-4" />
                 Add Your First Pet
               </Button>
@@ -86,7 +73,7 @@ export default function PetsPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {mockPets.map((pet) => (
+                  {pets.map((pet) => (
                     <TableRow key={pet.id}>
                       <TableCell className="font-medium">{pet.name}</TableCell>
                       <TableCell>
@@ -94,12 +81,12 @@ export default function PetsPage() {
                           {pet.species === 'dog' ? 'Dog' : 'Cat'}
                         </Badge>
                       </TableCell>
-                      <TableCell>{pet.breed || '—'}</TableCell>
+                      <TableCell>{(pet as any).breed || '—'}</TableCell>
                       <TableCell>
-                        {pet.currentWeight} {pet.weightUnit}
+                        {pet.currentWeight} kg
                       </TableCell>
                       <TableCell>
-                        {pet.targetWeight} {pet.weightUnit}
+                        {pet.targetWeight} kg
                       </TableCell>
                       <TableCell className="text-right">
                         <div className="flex items-center justify-end gap-2">
@@ -108,10 +95,27 @@ export default function PetsPage() {
                               <Eye className="h-4 w-4" />
                             </Button>
                           </Link>
-                          <Button variant="ghost" size="sm" className="text-primary dark:text-primary/60 hover:bg-tertiary dark:hover:bg-primary/10">
+                          <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            className="text-primary dark:text-primary/60 hover:bg-tertiary dark:hover:bg-primary/10"
+                            onClick={() => {
+                              setSelectedPet(pet);
+                              setShowEditModal(true);
+                            }}
+                          >
                             <Pencil className="h-4 w-4" />
                           </Button>
-                          <Button variant="ghost" size="sm" className="text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30">
+                          <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            className="text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30"
+                            onClick={() => {
+                              if (window.confirm(`Are you sure you want to delete ${pet.name}?`)) {
+                                deletePet(pet.id);
+                              }
+                            }}
+                          >
                             <Trash2 className="h-4 w-4" />
                           </Button>
                         </div>
@@ -124,6 +128,9 @@ export default function PetsPage() {
           )}
         </CardContent>
       </Card>
+      
+      <AddPetModal open={showAddModal} onOpenChange={setShowAddModal} />
+      <EditPetModal open={showEditModal} onOpenChange={setShowEditModal} pet={selectedPet} />
     </div>
   );
 }

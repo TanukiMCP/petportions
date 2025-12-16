@@ -15,21 +15,31 @@ export async function GET() {
   const startTime = Date.now();
 
   try {
-    console.log('[API] Fetching from Netlify Blobs...');
+    let foods;
     
-    const store = getStore('petfoods');
-    const data = await store.get('all-foods', { type: 'text' });
-
-    if (!data) {
-      console.log('[API] No pet foods found in Blobs storage');
-      return NextResponse.json([], {
-        headers: {
-          'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=7200',
-        },
-      });
+    // In production, use Netlify Blobs
+    if (process.env.NETLIFY) {
+      console.log('[API] Fetching from Netlify Blobs...');
+      const store = getStore('petfoods');
+      const data = await store.get('all-foods', { type: 'text' });
+      foods = data ? JSON.parse(data) : [];
+    } 
+    // In development, serve from public folder
+    else {
+      console.log('[API] Development mode - loading from public/petfoods-data.json');
+      const fs = await import('fs/promises');
+      const path = await import('path');
+      const dataPath = path.join(process.cwd(), 'public', 'petfoods-data.json');
+      
+      try {
+        const data = await fs.readFile(dataPath, 'utf-8');
+        foods = JSON.parse(data);
+      } catch (e) {
+        console.error('[API] Could not read petfoods-data.json:', e);
+        foods = [];
+      }
     }
 
-    const foods = JSON.parse(data);
     console.log(`[API] Fetched ${foods.length} pet foods in ${Date.now() - startTime}ms`);
 
     return NextResponse.json(foods, {

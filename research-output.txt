@@ -1,0 +1,65 @@
+Starting manufacturer research...
+
+
+[Iams] Researching https://www.iams.com...
+[Iams] Failed: ReferenceError: catFoodUrl is not defined
+    at researchManufacturer (C:\Users\ididi\OneDrive\Desktop\petportions.com\scripts\research-manufacturers.ts:99:7)
+    at async main (C:\Users\ididi\OneDrive\Desktop\petportions.com\scripts\research-manufacturers.ts:128:21)
+
+[Purina] Researching https://www.purina.com...
+[Purina] Could not find dog food page
+
+[Pedigree] Researching https://www.pedigree.com...
+[Pedigree] Could not find dog food page
+
+[Blue Buffalo] Researching https://www.bluebuffalo.com...
+[Blue Buffalo] Failed: ReferenceError: catFoodUrl is not defined
+    at researchManufacturer (C:\Users\ididi\OneDrive\Desktop\petportions.com\scripts\research-manufacturers.ts:99:7)
+    at async main (C:\Users\ididi\OneDrive\Desktop\petportions.com\scripts\research-manufacturers.ts:128:21)
+
+[Hill's] Researching https://www.hillspet.com...
+[Hill's] Failed: ReferenceError: catFoodUrl is not defined
+    at researchManufacturer (C:\Users\ididi\OneDrive\Desktop\petportions.com\scripts\research-manufacturers.ts:99:7)
+    at async main (C:\Users\ididi\OneDrive\Desktop\petportions.com\scripts\research-manufacturers.ts:128:21)
+
+[Royal Canin] Researching https://www.royalcanin.com...
+[Royal Canin] Failed: ReferenceError: catFoodUrl is not defined
+    at researchManufacturer (C:\Users\ididi\OneDrive\Desktop\petportions.com\scripts\research-manufacturers.ts:99:7)
+    at async main (C:\Users\ididi\OneDrive\Desktop\petportions.com\scripts\research-manufacturers.ts:128:21)
+
+[Diamond] Researching https://www.diamondpet.com...
+[Diamond] Could not find dog food page
+
+[Taste of the Wild] Researching https://www.tasteofthewildpetfood.com...
+[Taste of the Wild] Could not find dog food page
+
+[Wellness] Researching https://www.wellnesspetfood.com...
+[Wellness] Failed: ReferenceError: catFoodUrl is not defined
+    at researchManufacturer (C:\Users\ididi\OneDrive\Desktop\petportions.com\scripts\research-manufacturers.ts:99:7)
+    at async main (C:\Users\ididi\OneDrive\Desktop\petportions.com\scripts\research-manufacturers.ts:128:21)
+
+[Merrick] Researching https://www.merrickpetcare.com...
+[Merrick] Failed: ReferenceError: catFoodUrl is not defined
+    at researchManufacturer (C:\Users\ididi\OneDrive\Desktop\petportions.com\scripts\research-manufacturers.ts:99:7)
+    at async main (C:\Users\ididi\OneDrive\Desktop\petportions.com\scripts\research-manufacturers.ts:128:21)
+
+[Natural Balance] Researching https://www.naturalbalanceinc.com...
+[Natural Balance] Failed: ReferenceError: catFoodUrl is not defined
+    at researchManufacturer (C:\Users\ididi\OneDrive\Desktop\petportions.com\scripts\research-manufacturers.ts:99:7)
+    at async main (C:\Users\ididi\OneDrive\Desktop\petportions.com\scripts\research-manufacturers.ts:128:21)
+
+[Nutro] Researching https://www.nutro.com...
+[Nutro] Could not find dog food page
+
+[Farmer's Dog] Researching https://www.thefarmersdog.com...
+[Farmer's Dog] Failed: ReferenceError: catFoodUrl is not defined
+    at researchManufacturer (C:\Users\ididi\OneDrive\Desktop\petportions.com\scripts\research-manufacturers.ts:99:7)
+    at async main (C:\Users\ididi\OneDrive\Desktop\petportions.com\scripts\research-manufacturers.ts:128:21)
+
+[Honest Kitchen] Researching https://www.thehonestkitchen.com...
+[Honest Kitchen] Failed: ReferenceError: catFoodUrl is not defined
+    at researchManufacturer (C:\Users\ididi\OneDrive\Desktop\petportions.com\scripts\research-manufacturers.ts:99:7)
+    at async main (C:\Users\ididi\OneDrive\Desktop\petportions.com\scripts\research-manufacturers.ts:128:21)
+
+✅ Research complete! Found 0 scrapable manufacturers.
+Results saved to docs/manufacturer-catalog.json

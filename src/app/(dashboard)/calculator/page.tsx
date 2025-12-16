@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useMemo } from "react";
+import React, { Suspense, useState, useEffect, useMemo } from "react";
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -7,6 +7,7 @@ import { Printer } from "lucide-react";
 import { AnimatePresence } from "framer-motion";
 import { StepIndicator, type Step } from "@/components/ui/step-indicator";
 import { useMultiStepForm } from "@/hooks/useMultiStepForm";
+import { useCalculationHistory } from "@/context/CalculationHistoryContext";
 import { Step1PetType } from "@/components/calculator/Step1PetType";
 import { Step2BodyDetails } from "@/components/calculator/Step2BodyDetails";
 import { Step3Lifestyle } from "@/components/calculator/Step3Lifestyle";
@@ -17,8 +18,11 @@ import { calculatePortions } from "@/lib/calculations/portions";
 import type { PetFood } from "@/lib/types/food";
 import { Dog, Scale, Activity, Utensils } from "lucide-react";
 import { CalculatorResultsVisualization } from "@/components/calculator/CalculatorResultsVisualization";
+import { getCachedPetFoods } from "@/lib/cache/petfood-cache";
+import { useSearchParams } from "next/navigation";
 
-export default function CalculatorPage() {
+function CalculatorPageInner() {
+  const { addCalculation } = useCalculationHistory();
   const [formData, setFormData] = useState<Partial<FeedingCalculatorInput>>({
     species: 'dog',
     weightUnit: 'kg',
@@ -29,6 +33,7 @@ export default function CalculatorPage() {
   });
   const [selectedFood, setSelectedFood] = useState<PetFood | null>(null);
   const [result, setResult] = useState<FeedingCalculatorResult | null>(null);
+  const [selectedPet, setSelectedPet] = useState<any>(null);
 
   const {
     currentStepIndex,
@@ -43,7 +48,7 @@ export default function CalculatorPage() {
     { id: 'pet-type', label: 'Pet Type', icon: <Dog className="h-5 w-5" /> },
     { id: 'body-details', label: 'Body Details', icon: <Scale className="h-5 w-5" /> },
     { id: 'lifestyle', label: 'Lifestyle', icon: <Activity className="h-5 w-5" /> },
-    { id: 'food', label: 'Food (Optional)', icon: <Utensils className="h-5 w-5" /> },
+    { id: 'food', label: 'Food', icon: <Utensils className="h-5 w-5" /> },
   ];
 
   const updateFormData = (updates: Partial<FeedingCalculatorInput>) => {
@@ -53,6 +58,26 @@ export default function CalculatorPage() {
   const updateSelectedFood = (food: PetFood | null) => {
     setSelectedFood(food);
   };
+
+  // Handle foodId from URL parameter
+  const searchParams = useSearchParams();
+  useEffect(() => {
+    const foodId = searchParams.get('foodId');
+    if (foodId) {
+      const loadFood = async () => {
+        try {
+          const foods = await getCachedPetFoods();
+          const food = foods.find(f => f.id === foodId);
+          if (food) {
+            setSelectedFood(food);
+          }
+        } catch (error) {
+          console.error('Failed to load food:', error);
+        }
+      };
+      loadFood();
+    }
+  }, [searchParams]);
 
   // Calculate portions when food is selected and result exists
   const portionResult = useMemo<PortionResult | null>(() => {
@@ -75,7 +100,8 @@ export default function CalculatorPage() {
       formData.lifeStage &&
       formData.activityLevel &&
       formData.reproductiveStatus &&
-      formData.feedingFrequency
+      formData.feedingFrequency &&
+      selectedFood
     ) {
       const input: FeedingCalculatorInput = {
         species: formData.species,
@@ -88,6 +114,17 @@ export default function CalculatorPage() {
       };
       const calculated = calculateFeeding(input);
       setResult(calculated);
+      
+      // Record calculation in history
+      addCalculation({
+        type: 'calculator',
+        data: {
+          ...input,
+          foodName: selectedFood.productName,
+          foodBrand: selectedFood.brand,
+        },
+        result: calculated,
+      });
     }
   };
 
@@ -97,6 +134,13 @@ export default function CalculatorPage() {
       // Step 2 validation: weight and life stage required
       if (!formData.targetWeight || !formData.lifeStage) {
         return; // Don't proceed if validation fails
+      }
+    }
+    
+    if (currentStepIndex === 3) {
+      // Step 4 validation: food selection required
+      if (!selectedFood) {
+        return;
       }
     }
     
@@ -280,6 +324,7 @@ export default function CalculatorPage() {
                     species={formData.species || 'dog'}
                     updateData={updateFormData}
                     goToNext={handleNext}
+                    onPetSelect={setSelectedPet}
                   />
                 )}
                 {currentStepIndex === 1 && (
@@ -287,6 +332,7 @@ export default function CalculatorPage() {
                     key="step2"
                     data={formData}
                     updateData={updateFormData}
+                    selectedPet={selectedPet}
                   />
                 )}
                 {currentStepIndex === 2 && (
@@ -316,7 +362,7 @@ export default function CalculatorPage() {
                 >
                   Back
                 </Button>
-                <Button type="submit" className="bg-primary hover:bg-primary/90 text-white">
+                <Button type="submit" disabled={currentStepIndex === 3 && !selectedFood} className="bg-primary hover:bg-primary/90 text-white disabled:opacity-50">
                   {isLastStep ? "Calculate" : "Next"}
                 </Button>
               </div>
@@ -325,5 +371,13 @@ export default function CalculatorPage() {
         </Card>
       </div>
     </div>
+  );
+}
+
+export default function CalculatorPage() {
+  return (
+    <Suspense fallback={null}>
+      <CalculatorPageInner />
+    </Suspense>
   );
 }

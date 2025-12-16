@@ -5,16 +5,22 @@ import { FormWrapper } from "@/components/ui/form-wrapper";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Card, CardContent } from "@/components/ui/card";
-import { Dog, Cat } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dog, Cat, PawPrint } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { usePetContext } from "@/context/PetContext";
+import type { Pet } from "@/lib/types/pet";
 
 interface Step1Props {
   species: 'dog' | 'cat';
   updateData: (updates: { species: 'dog' | 'cat' }) => void;
   goToNext: () => void;
+  onPetSelect?: (pet: Pet) => void;
 }
 
-export function Step1PetType({ species, updateData, goToNext }: Step1Props) {
+export function Step1PetType({ species, updateData, goToNext, onPetSelect }: Step1Props) {
+  const { pets } = usePetContext();
+  
   const handleSpeciesChange = (value: string) => {
     updateData({ species: value as 'dog' | 'cat' });
     // Auto-advance after selection
@@ -23,12 +29,68 @@ export function Step1PetType({ species, updateData, goToNext }: Step1Props) {
     }, 500);
   };
 
+  const handlePetSelect = (petId: string) => {
+    const pet = pets.find(p => p.id === petId);
+    if (pet) {
+      updateData({ species: pet.species });
+      if (onPetSelect) {
+        onPetSelect(pet);
+      }
+      // Auto-advance after selection
+      setTimeout(() => {
+        goToNext();
+      }, 500);
+    }
+  };
+
   return (
     <FormWrapper
       title="What type of pet?"
       description="Select your pet's species to get started"
     >
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      {/* Pet Selector */}
+      {pets.length > 0 && (
+        <div className="mb-6">
+          <Label className="text-sm font-medium text-foreground mb-2 block">
+            Quick Start - Select Your Pet
+          </Label>
+          <Select onValueChange={handlePetSelect}>
+            <SelectTrigger className="w-full">
+              <div className="flex items-center gap-2">
+                <PawPrint className="h-4 w-4 text-muted-foreground" />
+                <SelectValue placeholder="Choose a pet to pre-fill data" />
+              </div>
+            </SelectTrigger>
+            <SelectContent>
+              {pets.map((pet) => (
+                <SelectItem key={pet.id} value={pet.id}>
+                  <div className="flex items-center gap-2">
+                    {pet.species === 'dog' ? (
+                      <Dog className="h-4 w-4" />
+                    ) : (
+                      <Cat className="h-4 w-4" />
+                    )}
+                    <span>{pet.name}</span>
+                    <span className="text-muted-foreground text-sm">
+                      ({pet.currentWeight} kg)
+                    </span>
+                  </div>
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <p className="text-xs text-muted-foreground mt-2">
+            Select a pet to automatically fill in their species and weight information
+          </p>
+        </div>
+      )}
+
+      {/* Manual Species Selection */}
+      <div className="space-y-4">
+        <div className="text-sm text-muted-foreground">
+          Or select manually:
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Card
           className={cn(
             "cursor-pointer transition-all hover:shadow-lg border-2",
@@ -96,6 +158,7 @@ export function Step1PetType({ species, updateData, goToNext }: Step1Props) {
             </div>
           </CardContent>
         </Card>
+      </div>
       </div>
     </FormWrapper>
   );

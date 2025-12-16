@@ -114,7 +114,7 @@ export function FeatureCardWithMockup({
         
         <CardHeader className="pb-4">
           <motion.div
-            className="w-14 h-14 bg-gradient-to-br from-primary/20 to-primary/10 dark:from-primary/30 dark:to-primary/20 rounded-xl flex items-center justify-center mb-4 border-2 border-primary/30 dark:border-primary/30"
+            className="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center mb-4 border-2 border-primary/30"
             variants={iconVariants}
             initial="initial"
             whileHover="hover"

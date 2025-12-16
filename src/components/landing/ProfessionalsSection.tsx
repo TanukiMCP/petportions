@@ -94,7 +94,7 @@ export function ProfessionalsSection() {
               >
                 <Card className="h-full border-2 border-primary/20 dark:border-primary/20 bg-white dark:bg-gray-800 hover:border-primary/40 dark:hover:border-primary/40 transition-all duration-300 hover:shadow-lg">
                   <CardContent className="p-6 text-center">
-                    <div className="flex items-center justify-center h-14 w-14 rounded-xl bg-gradient-to-br from-primary/20 to-primary/10 dark:from-primary/30 dark:to-primary/20 border-2 border-primary/30 mx-auto mb-4">
+                    <div className="flex items-center justify-center h-14 w-14 rounded-xl bg-primary/10 border-2 border-primary/30 mx-auto mb-4">
                       <Icon className="h-7 w-7 text-primary dark:text-primary" />
                     </div>
                     <h3 className="text-h5 mb-2 text-primary dark:text-primary">{benefit.label}</h3>

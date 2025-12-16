@@ -10,7 +10,9 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { ChevronDown, ChevronUp, Printer, Dog, Calendar, Utensils } from "lucide-react";
+import { ChevronDown, ChevronUp, Printer, Dog, Cat, Calendar, Utensils, Calculator } from "lucide-react";
+import { useCalculationHistory } from "@/context/CalculationHistoryContext";
+import Link from "next/link";
 import { FoodGraderResultsVisualization } from "@/components/food-grader/FoodGraderResultsVisualization";
 import { AnimatePresence } from "framer-motion";
 import { StepIndicator, type Step } from "@/components/ui/step-indicator";
@@ -24,7 +26,8 @@ import type { Species, LifeStage } from "@/lib/types/calculator";
 import type { GradingResult } from "@/lib/types/grading";
 
 export default function FoodGraderPage() {
-  const [species, setSpecies] = useState<Species>('dog');
+  const { addCalculation } = useCalculationHistory();
+  const [species, setSpecies] = useState<'dog' | 'cat'>('dog');
   const [lifeStage, setLifeStage] = useState<LifeStage>('adult');
   const [selectedFood, setSelectedFood] = useState<PetFood | null>(null);
   const [gradingResult, setGradingResult] = useState<GradingResult | null>(null);
@@ -58,6 +61,18 @@ export default function FoodGraderPage() {
     if (selectedFood) {
       const result = gradeFood(selectedFood, species, lifeStage);
       setGradingResult(result);
+      
+      // Record calculation in history
+      addCalculation({
+        type: 'grader',
+        data: {
+          species,
+          lifeStage,
+          foodName: selectedFood.productName,
+          foodBrand: selectedFood.brand,
+        },
+        result: result,
+      });
     }
   };
 
@@ -175,6 +190,12 @@ export default function FoodGraderPage() {
                     <Printer className="mr-2 h-4 w-4" />
                     Print Report
                   </Button>
+                  <Link href={`/calculator?foodId=${selectedFood?.id}`}>
+                    <Button className="w-full bg-primary hover:bg-primary/90 text-white">
+                      <Calculator className="mr-2 h-4 w-4" />
+                      Calculate Portions for This Food
+                    </Button>
+                  </Link>
                   <Button onClick={handleReset} variant="outline" className="w-full no-print border-primary/30 dark:border-primary/30 text-primary/80 dark:text-secondary hover:bg-tertiary dark:hover:bg-primary/10">
                     Analyze Another Food
                   </Button>

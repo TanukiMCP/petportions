@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
@@ -9,43 +9,34 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import WeightChart from "@/components/charts/weight/WeightChart";
 import { mockWeightEntries } from "@/lib/data/mock-weight-entries";
+import { usePetContext } from "@/context/PetContext";
 import type { Pet } from "@/lib/types/pet";
-
-// Mock pet data - in real app, this would come from API/database
-const mockPets: Pet[] = [
-  {
-    id: '1',
-    name: 'Max',
-    species: 'dog',
-    breed: 'Golden Retriever',
-    currentWeight: 32,
-    targetWeight: 29,
-    weightUnit: 'kg',
-  },
-  {
-    id: '2',
-    name: 'Luna',
-    species: 'cat',
-    breed: 'Siamese',
-    currentWeight: 4.8,
-    targetWeight: 4.5,
-    weightUnit: 'kg',
-  },
-  {
-    id: '3',
-    name: 'Buddy',
-    species: 'dog',
-    breed: 'Labrador Retriever',
-    currentWeight: 28.5,
-    targetWeight: 26,
-    weightUnit: 'kg',
-  },
-];
 
 export default function PetDetailPage() {
   const params = useParams();
   const petId = params?.id as string;
-  const pet = mockPets.find((p) => p.id === petId);
+  const { getPet, loading } = usePetContext();
+  const [pet, setPet] = useState<Pet | null>(null);
+
+  useEffect(() => {
+    if (petId) {
+      const foundPet = getPet(petId);
+      setPet(foundPet || null);
+    }
+  }, [petId, getPet]);
+
+  if (loading) {
+    return (
+      <div>
+        <PageBreadcrumb pageTitle="Loading..." />
+        <Card className="border-2 border-primary/20 dark:border-primary/20 bg-white dark:bg-gray-800">
+          <CardContent className="py-12 text-center">
+            <p className="text-secondary dark:text-secondary">Loading pet details...</p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   if (!pet) {
     return (
@@ -67,7 +58,7 @@ export default function PetDetailPage() {
   
   // Get weight entries for this pet
   const petWeightEntries = mockWeightEntries
-    .filter((entry) => entry.petId === petId && entry.weightUnit === pet.weightUnit)
+    .filter((entry) => entry.petId === petId)
     .map((entry) => ({
       date: entry.date,
       weight: entry.weight,
@@ -92,7 +83,7 @@ export default function PetDetailPage() {
                 <Badge className="bg-tertiary text-primary dark:bg-tertiary/30 dark:text-primary border-primary/30 dark:border-primary/30">
                   {pet.species === 'dog' ? 'Dog' : 'Cat'}
                 </Badge>
-                {pet.breed && <span className="text-secondary dark:text-secondary">{pet.breed}</span>}
+                {(pet as any).breed && <span className="text-secondary dark:text-secondary">{(pet as any).breed}</span>}
               </div>
             </div>
           </div>
@@ -104,7 +95,7 @@ export default function PetDetailPage() {
             <CardHeader className="pb-3">
               <CardDescription className="text-secondary dark:text-secondary">Current Weight</CardDescription>
               <CardTitle className="text-3xl text-primary dark:text-primary">
-                {pet.currentWeight} {pet.weightUnit}
+                {pet.currentWeight} kg
               </CardTitle>
             </CardHeader>
           </Card>
@@ -112,7 +103,7 @@ export default function PetDetailPage() {
             <CardHeader className="pb-3">
               <CardDescription className="text-secondary dark:text-secondary">Target Weight</CardDescription>
               <CardTitle className="text-3xl text-primary dark:text-primary">
-                {pet.targetWeight} {pet.weightUnit}
+                {pet.targetWeight} kg
               </CardTitle>
             </CardHeader>
           </Card>
@@ -127,7 +118,7 @@ export default function PetDetailPage() {
                   : 'text-primary dark:text-primary'
               }`}>
                 {weightDifference > 0 ? '+' : ''}
-                {weightDifference.toFixed(1)} {pet.weightUnit}
+                {weightDifference.toFixed(1)} kg
               </CardTitle>
             </CardHeader>
           </Card>
@@ -144,7 +135,7 @@ export default function PetDetailPage() {
               <WeightChart
                 weightEntries={petWeightEntries}
                 targetWeight={pet.targetWeight}
-                weightUnit={pet.weightUnit}
+                weightUnit="kg"
               />
             ) : (
               <div className="text-center py-12 text-secondary dark:text-secondary">

@@ -3,12 +3,14 @@ import { ThemeToggleButton } from "@/components/common/ThemeToggleButton";
 import NotificationDropdown from "@/components/header/NotificationDropdown";
 import UserDropdown from "@/components/header/UserDropdown";
 import { useSidebar } from "@/context/SidebarContext";
+import { useAuth } from "@/contexts/AuthContext";
 import Link from "next/link";
 import React, { useState } from "react";
-import { PawPrint } from "lucide-react";
+import { PawPrint, Calculator, ClipboardCheck, DollarSign, BookOpen } from "lucide-react";
 
 const AppHeader: React.FC = () => {
   const [isApplicationMenuOpen, setApplicationMenuOpen] = useState(false);
+  const { user } = useAuth();
 
   const { isMobileOpen, toggleSidebar, toggleMobileSidebar } = useSidebar();
 
@@ -27,6 +29,7 @@ const AppHeader: React.FC = () => {
   return (
     <header className="sticky top-0 flex w-full bg-white border-primary/30 dark:border-primary/30 z-99999 dark:bg-gray-900 lg:border-b">
       <div className="flex flex-col items-center justify-between grow lg:flex-row lg:px-6">
+        {/* Mobile Header */}
         <div className="flex items-center justify-between w-full gap-2 px-3 py-3 border-b border-gray-200 dark:border-gray-800 sm:gap-4 lg:justify-normal lg:border-b-0 lg:px-0 lg:py-4">
           <button
             className="items-center justify-center w-10 h-10 text-gray-500 border-gray-200 rounded-lg z-99999 dark:border-gray-800 lg:flex dark:text-gray-400 lg:h-11 lg:w-11 lg:border"
@@ -64,7 +67,6 @@ const AppHeader: React.FC = () => {
                 />
               </svg>
             )}
-            {/* Cross Icon */}
           </button>
 
           <Link href="/" className="lg:hidden flex items-center gap-2">
@@ -88,28 +90,125 @@ const AppHeader: React.FC = () => {
               <path
                 fillRule="evenodd"
                 clipRule="evenodd"
-                d="M5.99902 10.4951C6.82745 10.4951 7.49902 11.1667 7.49902 11.9951V12.0051C7.49902 12.8335 6.82745 13.5051 5.99902 13.5051C5.1706 13.5051 4.49902 12.8335 4.49902 12.0051V11.9951C4.49902 11.1667 5.1706 10.4951 5.99902 10.4951ZM17.999 10.4951C18.8275 10.4951 19.499 11.1667 19.499 11.9951V12.0051C19.499 12.8335 18.8275 13.5051 17.999 13.5051C17.1706 13.5051 16.499 12.8335 16.499 12.0051V11.9951C16.499 11.1667 17.1706 10.4951 17.999 10.4951ZM13.499 11.9951C13.499 11.1667 12.8275 10.4951 11.999 10.4951C11.1706 10.4951 10.499 11.1667 10.499 11.9951V12.0051C10.499 12.8335 11.1706 13.5051 11.999 13.5051C12.8275 13.5051 13.499 12.8335 13.499 12.0051V11.9951Z"
+                d="M5.99902 10.4951C6.82745 10.4951 7.49902 11.1667 7.49902 11.9951V12.0051C7.49902 12.8335 6.82745 13.5051 5.99902 13.5051C5.1706 13.5051 4.49902 12.8335 4.49902 12.0051V11.9951C4.49902 11.1667 5.1706 10.4951 5.99902 10.4951ZM17.999 10.4951C18.8275 10.4951 19.499 11.1667 19.499 11.9951V12.0051C19.499 12.8335 18.8275 13.5051 17.999 13.5051C17.1706 13.5051 16.499 12.8335 16.499 12.0051V11.9951C16.499 11.1667 17.1706 10.4951 17.999 10.4951ZM13.499 11.9951C13.499 11.1667 12.8275 10.4951 11.999 10.4951C11.1706 10.4951 10.499 11.1667 10.499 11.9951V12.0051C10.499 12.8335 11.1706 13.5051 11.999 13.5051C12.8275 13.5051 13.499 12.8335 13.499 11.9951V11.9951Z"
                 fill="currentColor"
               />
             </svg>
           </button>
         </div>
+
+        {/* Desktop Navigation & Actions */}
         <div
           className={`${
             isApplicationMenuOpen ? "flex" : "hidden"
-          } items-center justify-between w-full gap-4 px-5 py-4 lg:flex shadow-theme-md lg:justify-end lg:px-0 lg:shadow-none`}
+          } flex-col lg:flex-row items-center justify-between w-full gap-4 px-5 py-4 lg:flex lg:px-0 lg:py-4`}
         >
-          <div className="flex items-center gap-2 2xsm:gap-3">
-            {/* <!-- Dark Mode Toggler --> */}
-            <ThemeToggleButton />
-            {/* <!-- Dark Mode Toggler --> */}
+          {/* Logo - Desktop */}
+          <Link href="/" className="hidden lg:flex items-center gap-2">
+            <PawPrint className="w-8 h-8 text-primary dark:text-primary" />
+            <span className="text-xl font-bold text-gray-900 dark:text-white">
+              PetPortions
+            </span>
+          </Link>
 
-           <NotificationDropdown /> 
-            {/* <!-- Notification Menu Area --> */}
+          {/* Main Navigation */}
+          <nav className="hidden md:flex items-center gap-4 lg:gap-6">
+            <Link
+              href="/calculator"
+              className="flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-primary dark:text-gray-300 dark:hover:text-primary transition-colors"
+            >
+              <Calculator className="w-4 h-4" />
+              <span className="hidden sm:inline">Calculator</span>
+            </Link>
+            <Link
+              href="/food-grader"
+              className="flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-primary dark:text-gray-300 dark:hover:text-primary transition-colors"
+            >
+              <ClipboardCheck className="w-4 h-4" />
+              <span className="hidden sm:inline">Food Grader</span>
+            </Link>
+            <Link
+              href="/pricing"
+              className="flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-primary dark:text-gray-300 dark:hover:text-primary transition-colors"
+            >
+              <DollarSign className="w-4 h-4" />
+              <span className="hidden sm:inline">Pricing</span>
+            </Link>
+            <Link
+              href="/resources"
+              className="flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-primary dark:text-gray-300 dark:hover:text-primary transition-colors"
+            >
+              <BookOpen className="w-4 h-4" />
+              <span className="hidden sm:inline">Resources</span>
+            </Link>
+          </nav>
+
+          {/* Right Side Actions */}
+          <div className="flex items-center gap-3">
+            {/* Mobile Navigation */}
+            <nav className="flex flex-col lg:hidden gap-4 w-full">
+              <Link
+                href="/calculator"
+                className="flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-primary dark:text-gray-300 dark:hover:text-primary transition-colors"
+              >
+                <Calculator className="w-4 h-4" />
+                Calculator
+              </Link>
+              <Link
+                href="/food-grader"
+                className="flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-primary dark:text-gray-300 dark:hover:text-primary transition-colors"
+              >
+                <ClipboardCheck className="w-4 h-4" />
+                Food Grader
+              </Link>
+              <Link
+                href="/pricing"
+                className="flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-primary dark:text-gray-300 dark:hover:text-primary transition-colors"
+              >
+                <DollarSign className="w-4 h-4" />
+                Pricing
+              </Link>
+              <Link
+                href="/resources"
+                className="flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-primary dark:text-gray-300 dark:hover:text-primary transition-colors"
+              >
+                <BookOpen className="w-4 h-4" />
+                Resources
+              </Link>
+            </nav>
+
+            {/* Auth Actions */}
+            {user ? (
+              <div className="flex items-center gap-2">
+                <Link
+                  href="/dashboard"
+                  className="hidden lg:flex items-center gap-2 px-4 py-2 text-sm font-medium text-primary bg-primary/10 rounded-lg hover:bg-primary/20 transition-colors"
+                >
+                  Dashboard
+                </Link>
+                <NotificationDropdown />
+                <UserDropdown />
+              </div>
+            ) : (
+              <div className="flex items-center gap-2">
+                <Link
+                  href="/login"
+                  className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-primary dark:text-gray-300 dark:hover:text-primary transition-colors"
+                >
+                  Login
+                </Link>
+                <Link
+                  href="/signup"
+                  className="px-4 py-2 text-sm font-medium text-white bg-primary rounded-lg hover:bg-primary/90 transition-colors"
+                >
+                  Sign Up
+                </Link>
+              </div>
+            )}
+
+            {/* Theme Toggle */}
+            <ThemeToggleButton />
           </div>
-          {/* <!-- User Area --> */}
-          <UserDropdown /> 
-    
         </div>
       </div>
     </header>

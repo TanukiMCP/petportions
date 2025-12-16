@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { FormWrapper } from "@/components/ui/form-wrapper";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -11,9 +11,19 @@ import type { FeedingCalculatorInput } from "@/lib/types/calculator";
 interface Step2Props {
   data: Partial<FeedingCalculatorInput>;
   updateData: (updates: Partial<FeedingCalculatorInput>) => void;
+  selectedPet?: any;
 }
 
-export function Step2BodyDetails({ data, updateData }: Step2Props) {
+export function Step2BodyDetails({ data, updateData, selectedPet }: Step2Props) {
+  // Pre-fill data when a pet is selected
+  useEffect(() => {
+    if (selectedPet && !data.targetWeight) {
+      updateData({
+        targetWeight: selectedPet.targetWeight,
+        weightUnit: 'kg',
+      });
+    }
+  }, [selectedPet, data.targetWeight, updateData]);
   return (
     <FormWrapper
       title="Body Details"
@@ -116,5 +126,6 @@ export function Step2BodyDetails({ data, updateData }: Step2Props) {
     </FormWrapper>
   );
 }
+
 
 

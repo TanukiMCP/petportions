@@ -3,21 +3,25 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ThemeToggleButton } from "@/components/common/ThemeToggleButton";
-import { PawPrint, Calculator, ClipboardCheck, Users, LogIn } from "lucide-react";
+import { PawPrint, Calculator, ClipboardCheck, BookOpen, Heart, LogIn, Menu } from "lucide-react";
 import { usePathname } from "next/navigation";
+import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { useState } from "react";
 
 export function PublicHeader() {
   const pathname = usePathname();
+  const [isOpen, setIsOpen] = useState(false);
 
   const navItems = [
     { href: "/calculator", label: "Calculator", icon: Calculator },
     { href: "/food-grader", label: "Food Grader", icon: ClipboardCheck },
-    { href: "/pets", label: "My Pets", icon: Users },
+    { href: "/about", label: "About", icon: Heart },
+    { href: "/resources", label: "Resources", icon: BookOpen },
   ];
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-primary/30 dark:border-primary/30 bg-white/95 dark:bg-gray-900/95 backdrop-blur supports-[backdrop-filter]:bg-white/80 dark:supports-[backdrop-filter]:bg-gray-900/80">
-      <div className="container mx-auto px-4">
+    <header className="sticky top-0 z-50 w-full border-b border-primary/30 dark:border-primary/30 bg-background/95 dark:bg-gray-900/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 dark:supports-[backdrop-filter]:bg-gray-900/80">
+      <div className="container mx-auto max-w-7xl px-4">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2">
@@ -29,7 +33,7 @@ export function PublicHeader() {
             </span>
           </Link>
 
-          {/* Navigation */}
+          {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-1">
             {navItems.map((item) => {
               const Icon = item.icon;
@@ -52,10 +56,10 @@ export function PublicHeader() {
             })}
           </nav>
 
-          {/* Right side actions */}
-          <div className="flex items-center gap-2">
+          {/* Right side actions (Desktop) */}
+          <div className="hidden md:flex items-center gap-2">
             <ThemeToggleButton />
-            <Link href="/signin">
+            <Link href="/login">
               <Button
                 variant="outline"
                 className="gap-2 border-primary/30 dark:border-primary/30 text-primary/80 dark:text-secondary hover:bg-tertiary dark:hover:bg-primary/10"
@@ -70,10 +74,73 @@ export function PublicHeader() {
               </Button>
             </Link>
           </div>
+
+          {/* Mobile Menu Trigger */}
+          <div className="flex md:hidden items-center gap-2">
+            <ThemeToggleButton />
+            <Sheet open={isOpen} onOpenChange={setIsOpen}>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon" className="text-primary">
+                  <Menu className="h-6 w-6" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right" className="w-[300px] sm:w-[400px]">
+                <SheetHeader className="text-left mb-6">
+                  <SheetTitle className="flex items-center gap-2 text-primary">
+                    <PawPrint className="h-6 w-6" />
+                    PetPortions
+                  </SheetTitle>
+                </SheetHeader>
+                
+                <div className="flex flex-col gap-6">
+                  <nav className="flex flex-col gap-2">
+                    {navItems.map((item) => {
+                      const Icon = item.icon;
+                      const isActive = pathname === item.href;
+                      return (
+                        <Link key={item.href} href={item.href} onClick={() => setIsOpen(false)}>
+                          <Button
+                            variant={isActive ? "default" : "ghost"}
+                            className={`w-full justify-start gap-3 h-12 text-base ${
+                              isActive
+                                ? "bg-primary hover:bg-primary/90 text-white"
+                                : "text-gray-700 dark:text-gray-300 hover:bg-tertiary dark:hover:bg-primary/10"
+                            }`}
+                          >
+                            <Icon className="h-5 w-5" />
+                            {item.label}
+                          </Button>
+                        </Link>
+                      );
+                    })}
+                  </nav>
+
+                  <div className="flex flex-col gap-3 pt-6 border-t border-gray-200 dark:border-gray-800">
+                    <Link href="/login" onClick={() => setIsOpen(false)}>
+                      <Button
+                        variant="outline"
+                        className="w-full justify-start gap-3 h-12 border-primary/30 dark:border-primary/30 text-primary/80 dark:text-secondary"
+                      >
+                        <LogIn className="h-5 w-5" />
+                        Sign In
+                      </Button>
+                    </Link>
+                    <Link href="/signup" onClick={() => setIsOpen(false)}>
+                      <Button className="w-full justify-start gap-3 h-12 bg-primary hover:bg-primary/90 text-white">
+                        <PawPrint className="h-5 w-5" />
+                        Sign Up Free
+                      </Button>
+                    </Link>
+                  </div>
+                </div>
+              </SheetContent>
+            </Sheet>
+          </div>
         </div>
       </div>
     </header>
   );
 }
+
 
 

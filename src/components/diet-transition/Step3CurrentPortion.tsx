@@ -4,6 +4,7 @@ import React from "react";
 import { FormWrapper } from "@/components/ui/form-wrapper";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import Link from "next/link";
 
 interface Step3Props {
   currentPortion: string;
@@ -38,10 +39,19 @@ export function Step3CurrentPortion({ currentPortion, updateData }: Step3Props) 
           <p className="text-xs text-muted-foreground mt-2">
             💡 Tip: You can use decimals (e.g., 1.5 cups, 0.75 cups)
           </p>
+          <div className="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+            <p className="text-sm text-blue-800">
+              <strong>Not sure about the portion?</strong>
+            </p>
+            <p className="text-xs text-blue-700 mt-1">
+              Use our <Link href="/calculator" className="underline hover:text-blue-900">Feeding Calculator</Link> to get precise portion recommendations based on your pet's weight, age, and activity level.
+            </p>
+          </div>
         </div>
       </div>
     </FormWrapper>
   );
 }
+
 
 

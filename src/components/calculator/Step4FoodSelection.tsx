@@ -16,8 +16,8 @@ interface Step4Props {
 export function Step4FoodSelection({ data, selectedFood, onFoodSelect }: Step4Props) {
   return (
     <FormWrapper
-      title="Food Selection (Optional)"
-      description="Select your pet's food for portion recommendations, or skip to see calorie-only results"
+      title="Select Your Pet's Food"
+      description="Search and select the food you're feeding to get exact portion recommendations"
     >
       <div className="space-y-4">
         <div className="space-y-2">
@@ -29,10 +29,6 @@ export function Step4FoodSelection({ data, selectedFood, onFoodSelect }: Step4Pr
             placeholder="Search for pet food..."
           />
         </div>
-
-        <p className="text-xs text-muted-foreground">
-          You can skip this step and calculate calories only. Food selection helps provide precise portion recommendations.
-        </p>
       </div>
     </FormWrapper>
   );

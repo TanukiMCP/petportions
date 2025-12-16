@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+"use client";
 import React from "react";
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -6,46 +6,16 @@ import Link from "next/link";
 import { Calculator, ClipboardCheck, PawPrint, ArrowRightLeft, Plus, Dog, Cat } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { usePetContext } from "@/context/PetContext";
+import { useCalculationHistory } from "@/context/CalculationHistoryContext";
 import type { Pet } from "@/lib/types/pet";
 
-export const metadata: Metadata = {
-  title: "Dashboard | PetPortions",
-  description: "PetPortions Dashboard",
-};
-
-const mockPets: Pet[] = [
-  {
-    id: '1',
-    name: 'Max',
-    species: 'dog',
-    breed: 'Golden Retriever',
-    currentWeight: 32,
-    targetWeight: 29,
-    weightUnit: 'kg',
-  },
-  {
-    id: '2',
-    name: 'Luna',
-    species: 'cat',
-    breed: 'Siamese',
-    currentWeight: 4.8,
-    targetWeight: 4.5,
-    weightUnit: 'kg',
-  },
-  {
-    id: '3',
-    name: 'Buddy',
-    species: 'dog',
-    breed: 'Labrador Retriever',
-    currentWeight: 28.5,
-    targetWeight: 26,
-    weightUnit: 'kg',
-  },
-];
-
 export default function DashboardPage() {
-  const displayPets = mockPets.slice(0, 3);
-  const hasMorePets = mockPets.length > 3;
+  const { pets, loading } = usePetContext();
+  const { getRecentCalculations } = useCalculationHistory();
+  const displayPets = pets.slice(0, 3);
+  const hasMorePets = pets.length > 3;
+  const recentCalculations = getRecentCalculations(3);
 
   return (
     <div className="page-spacing">
@@ -70,7 +40,13 @@ export default function DashboardPage() {
           </Link>
         </div>
         
-        {displayPets.length === 0 ? (
+        {loading ? (
+          <Card>
+            <CardContent className="text-center py-12">
+              <p className="text-body-md text-muted mb-4">Loading pets...</p>
+            </CardContent>
+          </Card>
+        ) : displayPets.length === 0 ? (
           <Card>
             <CardContent className="text-center py-12">
               <p className="text-body-md text-muted mb-4">No pets added yet.</p>
@@ -91,7 +67,7 @@ export default function DashboardPage() {
                     <div className="flex items-start justify-between">
                       <div>
                         <CardTitle className="text-primary dark:text-primary">{pet.name}</CardTitle>
-                        <CardDescription className="text-secondary dark:text-secondary">{pet.breed || 'Unknown'}</CardDescription>
+                        <CardDescription className="text-secondary dark:text-secondary">{(pet as any).breed || 'Unknown'}</CardDescription>
                       </div>
                       <Badge className="flex items-center gap-1 bg-tertiary text-primary dark:bg-tertiary/30 dark:text-primary border-primary/30 dark:border-primary/30">
                         {pet.species === 'dog' ? (
@@ -107,13 +83,13 @@ export default function DashboardPage() {
                       <div className="flex justify-between">
                         <span className="text-secondary dark:text-secondary">Current Weight</span>
                         <span className="font-semibold text-foreground dark:text-foreground">
-                          {pet.currentWeight} {pet.weightUnit}
+                          {pet.currentWeight} kg
                         </span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-secondary dark:text-secondary">Target Weight</span>
                         <span className="font-semibold text-foreground dark:text-foreground">
-                          {pet.targetWeight} {pet.weightUnit}
+                          {pet.targetWeight} kg
                         </span>
                       </div>
                       <div className="flex justify-between">
@@ -123,7 +99,7 @@ export default function DashboardPage() {
                             ? 'text-red-600 dark:text-red-400' 
                             : 'text-green-600 dark:text-green-400'
                         }`}>
-                          {Math.abs(pet.currentWeight - pet.targetWeight).toFixed(1)} {pet.weightUnit}
+                          {Math.abs(pet.currentWeight - pet.targetWeight).toFixed(1)} kg
                         </span>
                       </div>
                     </div>
@@ -220,14 +196,49 @@ export default function DashboardPage() {
       {/* Recent Activity Section */}
       <div>
         <h2 className="text-h2 mb-4 text-primary dark:text-primary">Recent Activity</h2>
-        <Card className="border-2 border-primary/20 dark:border-primary/20 bg-tertiary/30 dark:bg-tertiary/20">
-          <CardContent className="text-center py-12">
-            <p className="text-body-md text-secondary dark:text-secondary">No recent activity yet.</p>
-            <p className="text-body-sm text-secondary dark:text-secondary mt-2">
-              Start using the tools above to track your pet's nutrition.
-            </p>
-          </CardContent>
-        </Card>
+        {recentCalculations.length === 0 ? (
+          <Card className="border-2 border-primary/20 dark:border-primary/20 bg-tertiary/30 dark:bg-tertiary/20">
+            <CardContent className="text-center py-12">
+              <p className="text-body-md text-secondary dark:text-secondary">No recent activity yet.</p>
+              <p className="text-body-sm text-secondary dark:text-secondary mt-2">
+                Start using the tools above to track your pet's nutrition.
+              </p>
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="space-y-3">
+            {recentCalculations.map((calc) => (
+              <Card key={calc.id} className="border-2 border-primary/20 dark:border-primary/20 bg-white dark:bg-gray-800">
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 rounded-lg bg-tertiary dark:bg-tertiary/30 border border-primary/30 dark:border-primary/30">
+                        {calc.type === 'calculator' && <Calculator className="h-4 w-4 text-primary dark:text-primary" />}
+                        {calc.type === 'grader' && <ClipboardCheck className="h-4 w-4 text-primary dark:text-primary" />}
+                        {calc.type === 'transition' && <ArrowRightLeft className="h-4 w-4 text-primary dark:text-primary" />}
+                      </div>
+                      <div>
+                        <p className="font-medium text-primary dark:text-primary">
+                          {calc.type === 'calculator' && 'Feeding Calculation'}
+                          {calc.type === 'grader' && 'Food Grading'}
+                          {calc.type === 'transition' && 'Diet Transition'}
+                        </p>
+                        <p className="text-sm text-secondary dark:text-secondary">
+                          {new Date(calc.timestamp).toLocaleDateString()} at {new Date(calc.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        </p>
+                      </div>
+                    </div>
+                    <Badge className="bg-tertiary text-primary dark:bg-tertiary/30 dark:text-primary border-primary/30 dark:border-primary/30">
+                      {calc.type === 'calculator' && 'Calculator'}
+                      {calc.type === 'grader' && 'Grader'}
+                      {calc.type === 'transition' && 'Transition'}
+                    </Badge>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

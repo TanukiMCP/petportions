@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 
 export interface BasicSectionProps {
   imageUrl: string;
+  imageClassName?: string;
   title: string;
   overTitle: string;
   reversed?: boolean;
@@ -13,13 +14,14 @@ export interface BasicSectionProps {
 
 export default function BasicSection({
   imageUrl,
+  imageClassName,
   title,
   overTitle,
   reversed,
   children,
 }: PropsWithChildren<BasicSectionProps>) {
   return (
-    <section className={`py-16 md:py-24 lg:py-32 px-4 bg-white dark:bg-gray-900`}>
+    <section className={`py-16 md:py-24 lg:py-32 px-4 bg-background dark:bg-gray-900`}>
       <div className="container mx-auto max-w-7xl">
         <div
           className={`flex flex-col ${
@@ -29,7 +31,7 @@ export default function BasicSection({
           {/* Image Container */}
           <motion.div
             className="flex-1 w-full"
-            initial={{ opacity: 0, x: reversed ? 20 : -20 }}
+            initial={{ opacity: 1, x: reversed ? 20 : -20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
@@ -39,7 +41,7 @@ export default function BasicSection({
                 src={imageUrl}
                 alt={title}
                 fill
-                className="object-cover"
+                className={`object-cover ${imageClassName ?? ""}`}
               />
             </div>
           </motion.div>
@@ -47,7 +49,7 @@ export default function BasicSection({
           {/* Content Container */}
           <motion.div
             className="flex-1"
-            initial={{ opacity: 0, x: reversed ? -20 : 20 }}
+            initial={{ opacity: 1, x: reversed ? -20 : 20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.2 }}

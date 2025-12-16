@@ -1,37 +1,18 @@
 import React, { FC } from "react";
 
-interface InputProps {
-  type?: "text" | "number" | "email" | "password" | "date" | "time" | string;
-  id?: string;
-  name?: string;
-  placeholder?: string;
-  defaultValue?: string | number;
-  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  className?: string;
-  min?: string;
-  max?: string;
-  step?: number;
-  disabled?: boolean;
+interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "size"> {
   success?: boolean;
   error?: boolean;
   hint?: string; // Optional hint text
 }
 
 const Input: FC<InputProps> = ({
-  type = "text",
-  id,
-  name,
-  placeholder,
-  defaultValue,
-  onChange,
   className = "",
-  min,
-  max,
-  step,
   disabled = false,
   success = false,
   error = false,
   hint,
+  ...props
 }) => {
   // Determine input styles based on state (disabled, success, error)
   let inputClasses = `h-12 w-full rounded-lg border appearance-none px-4 py-3 text-body-md font-medium shadow-sm placeholder:text-muted-foreground focus:outline-hidden focus:ring-2 dark:bg-gray-900 dark:text-foreground dark:placeholder:text-muted-foreground dark:focus:border-primary ${className}`;
@@ -50,15 +31,7 @@ const Input: FC<InputProps> = ({
   return (
     <div className="relative">
       <input
-        type={type}
-        id={id}
-        name={name}
-        placeholder={placeholder}
-        defaultValue={defaultValue}
-        onChange={onChange}
-        min={min}
-        max={max}
-        step={step}
+        {...props}
         disabled={disabled}
         className={inputClasses}
       />

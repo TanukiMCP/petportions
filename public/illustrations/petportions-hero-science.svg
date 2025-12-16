@@ -1,0 +1,55 @@
+<svg width="1200" height="675" viewBox="0 0 1200 675" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      .stroke{stroke:#C4320A;stroke-width:10;stroke-linecap:round;stroke-linejoin:round}
+      .stroke2{stroke:#1D2939;stroke-width:8;stroke-linecap:round;stroke-linejoin:round}
+      .fillBeige{fill:#FAF6EF}
+      .fillCard{fill:#FFFFFF}
+      .fillAccent{fill:#EC4A0A}
+      .fillSoft{fill:#FFE8DF}
+    </style>
+  </defs>
+  <rect x="0" y="0" width="1200" height="675" rx="40" class="fillBeige"/>
+
+  <!-- Soft blobs (solid, not gradients) -->
+  <path d="M180 140C260 60 410 70 470 150C530 230 470 340 360 360C250 380 110 300 120 210C128 180 150 160 180 140Z" class="fillSoft"/>
+  <path d="M910 120C1010 80 1110 130 1130 230C1150 330 1060 420 940 400C820 380 760 260 800 180C820 145 865 135 910 120Z" class="fillSoft"/>
+
+  <!-- Clipboard/card -->
+  <rect x="250" y="200" width="430" height="320" rx="28" class="fillCard"/>
+  <rect x="250" y="200" width="430" height="320" rx="28" class="stroke2" fill="none"/>
+  <rect x="360" y="160" width="210" height="90" rx="20" class="fillCard"/>
+  <rect x="360" y="160" width="210" height="90" rx="20" class="stroke2" fill="none"/>
+
+  <!-- Paw + check -->
+  <circle cx="395" cy="310" r="18" class="fillSoft"/>
+  <circle cx="450" cy="300" r="18" class="fillSoft"/>
+  <circle cx="505" cy="310" r="18" class="fillSoft"/>
+  <circle cx="430" cy="350" r="22" class="fillSoft"/>
+  <path d="M610 315L640 345L700 285" class="stroke"/>
+
+  <!-- Lines on clipboard -->
+  <path d="M300 410H600" class="stroke2"/>
+  <path d="M300 455H635" class="stroke2"/>
+  <path d="M300 500H520" class="stroke2"/>
+
+  <!-- Measuring cup -->
+  <path d="M770 455C770 410 805 380 850 380H940C985 380 1020 410 1020 455V520C1020 555 990 585 955 585H835C800 585 770 555 770 520V455Z" class="fillCard"/>
+  <path d="M770 455C770 410 805 380 850 380H940C985 380 1020 410 1020 455V520C1020 555 990 585 955 585H835C800 585 770 555 770 520V455Z" class="stroke2" fill="none"/>
+  <path d="M1020 470H1060C1095 470 1120 495 1120 530C1120 565 1095 590 1060 590H1020" class="stroke2"/>
+
+  <!-- Measurement marks -->
+  <path d="M815 440H880" class="stroke2"/>
+  <path d="M815 475H860" class="stroke2"/>
+  <path d="M815 510H895" class="stroke2"/>
+
+  <!-- Small flame icon -->
+  <path d="M910 210C940 250 930 285 900 305C870 325 830 310 820 275C810 240 845 220 850 190C855 160 840 150 840 150C865 150 895 175 910 210Z" class="fillAccent"/>
+  <path d="M910 210C940 250 930 285 900 305C870 325 830 310 820 275C810 240 845 220 850 190C855 160 840 150 840 150C865 150 895 175 910 210Z" class="stroke2" fill="none"/>
+
+  <!-- Decorative dots -->
+  <circle cx="160" cy="520" r="8" class="fillAccent"/>
+  <circle cx="200" cy="545" r="6" class="fillAccent"/>
+  <circle cx="1030" cy="160" r="8" class="fillAccent"/>
+  <circle cx="1070" cy="185" r="6" class="fillAccent"/>
+</svg>

@@ -70,7 +70,7 @@ export function FeatureCard({
       <Card className="h-full border-2 border-primary/20 dark:border-primary/20 hover:border-primary/40 dark:hover:border-primary/40 transition-all duration-300 hover:shadow-lg bg-white dark:bg-gray-800 overflow-hidden group">
         <CardHeader className="pb-4">
           <motion.div
-            className="w-14 h-14 bg-gradient-to-br from-primary/20 to-primary/10 dark:from-primary/30 dark:to-primary/20 rounded-xl flex items-center justify-center mb-4 border-2 border-primary/30 dark:border-primary/30"
+            className="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center mb-4 border-2 border-primary/30"
             variants={iconVariants}
             initial="initial"
             whileHover="hover"

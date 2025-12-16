@@ -2,13 +2,57 @@
 import Checkbox from "@/components/form/input/Checkbox";
 import Input from "@/components/form/input/InputField";
 import Label from "@/components/form/Label";
+import Button from "@/components/ui/button/Button";
 import { ChevronLeftIcon, EyeCloseIcon, EyeIcon } from "@/icons";
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useAuth } from "@/contexts/AuthContext";
+import { useRouter } from "next/navigation";
 
 export default function SignUpForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
+  const [keepLoggedIn, setKeepLoggedIn] = useState(true);
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  
+  const { user, isLoading: isAuthLoading, signup } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!isAuthLoading && user) {
+      router.push("/dashboard");
+    }
+  }, [user, isAuthLoading, router]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!isChecked) {
+      setError("Please accept the terms and conditions");
+      return;
+    }
+    
+    setError("");
+    setIsLoading(true);
+
+    const result = await signup(email, password, {
+      remember: keepLoggedIn,
+      metadata: { first_name: firstName, last_name: lastName },
+    });
+    
+    if (result.error) {
+      setError(result.error);
+    } else {
+      router.push("/dashboard");
+    }
+    
+    setIsLoading(false);
+  };
   return (
     <div className="flex items-center justify-center w-full min-h-[calc(100vh-4rem)] py-12 px-4 sm:px-6 lg:px-8 overflow-y-auto bg-tertiary">
       <div className="w-full max-w-md">
@@ -30,7 +74,11 @@ export default function SignUpForm() {
           </p>
         </div>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-5 mb-4">
-          <button className="inline-flex items-center justify-center gap-3 py-3.5 text-body-sm font-semibold text-foreground transition-colors bg-tertiary rounded-lg px-7 hover:bg-tertiary/80 border border-primary/20 dark:bg-white/5 dark:text-white/90 dark:hover:bg-white/10">
+          <button 
+            disabled 
+            className="inline-flex items-center justify-center gap-3 py-3.5 text-body-sm font-semibold text-gray-400 transition-colors bg-gray-100 rounded-lg px-7 border border-gray-200 dark:bg-gray-800 dark:text-gray-500 dark:border-gray-700 cursor-not-allowed"
+            title="Google sign-up not available"
+          >
             <svg
               width="20"
               height="20"
@@ -57,7 +105,11 @@ export default function SignUpForm() {
             </svg>
             Sign up with Google
           </button>
-          <button className="inline-flex items-center justify-center gap-3 py-3.5 text-body-sm font-semibold text-foreground transition-colors bg-tertiary rounded-lg px-7 hover:bg-tertiary/80 border border-primary/20 dark:bg-white/5 dark:text-white/90 dark:hover:bg-white/10">
+          <button 
+            disabled 
+            className="inline-flex items-center justify-center gap-3 py-3.5 text-body-sm font-semibold text-gray-400 transition-colors bg-gray-100 rounded-lg px-7 border border-gray-200 dark:bg-gray-800 dark:text-gray-500 dark:border-gray-700 cursor-not-allowed"
+            title="X sign-up not available"
+          >
             <svg
               width="21"
               className="fill-current"
@@ -81,8 +133,13 @@ export default function SignUpForm() {
             </span>
           </div>
         </div>
-        <form>
+        <form onSubmit={handleSubmit}>
           <div className="space-y-5">
+            {error && (
+              <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg dark:bg-red-900/20 dark:border-red-800 dark:text-red-400">
+                {error}
+              </div>
+            )}
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
               <div className="sm:col-span-1">
                 <Label>
@@ -93,6 +150,10 @@ export default function SignUpForm() {
                   id="fname"
                   name="fname"
                   placeholder="Enter your first name"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                  required
+                  disabled={isLoading}
                 />
               </div>
               <div className="sm:col-span-1">
@@ -104,6 +165,10 @@ export default function SignUpForm() {
                   id="lname"
                   name="lname"
                   placeholder="Enter your last name"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                  required
+                  disabled={isLoading}
                 />
               </div>
             </div>
@@ -116,6 +181,10 @@ export default function SignUpForm() {
                 id="email"
                 name="email"
                 placeholder="Enter your email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                disabled={isLoading}
               />
             </div>
             <div>
@@ -126,6 +195,10 @@ export default function SignUpForm() {
                 <Input
                   placeholder="Enter your password"
                   type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  disabled={isLoading}
                 />
                 <span
                   onClick={() => setShowPassword(!showPassword)}
@@ -156,10 +229,24 @@ export default function SignUpForm() {
                 </span>
               </p>
             </div>
+            <div className="flex items-center gap-3">
+              <Checkbox
+                className="w-5 h-5"
+                checked={keepLoggedIn}
+                onChange={setKeepLoggedIn}
+              />
+              <p className="inline-block font-medium text-body-sm text-foreground dark:text-foreground">
+                Keep me logged in
+              </p>
+            </div>
             <div>
-              <button className="flex items-center justify-center w-full px-4 py-3.5 text-body-md font-semibold text-primary-foreground transition rounded-lg bg-primary shadow-lg hover:bg-primary/90">
-                Sign Up
-              </button>
+              <Button 
+                type="submit"
+                className="flex items-center justify-center w-full px-4 py-3.5 text-body-md font-semibold text-primary-foreground transition rounded-lg bg-primary shadow-lg hover:bg-primary/90"
+                disabled={isLoading}
+              >
+                {isLoading ? "Creating account..." : "Sign Up"}
+              </Button>
             </div>
           </div>
         </form>

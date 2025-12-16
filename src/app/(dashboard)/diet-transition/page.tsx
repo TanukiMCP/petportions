@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -23,6 +23,8 @@ import { Step4Duration } from "@/components/diet-transition/Step4Duration";
 import { calculateTransition } from "@/lib/calculations/transition";
 import type { PetFood } from "@/lib/types/food";
 import type { TransitionPlan } from "@/lib/types/transition";
+import { getCachedPetFoods } from "@/lib/cache/petfood-cache";
+import { useSearchParams } from "next/navigation";
 
 export default function DietTransitionPage() {
   const [currentFood, setCurrentFood] = useState<PetFood | null>(null);
@@ -46,6 +48,32 @@ export default function DietTransitionPage() {
     { id: 'portion', label: 'Portion', icon: <Scale className="h-5 w-5" /> },
     { id: 'duration', label: 'Duration', icon: <Calendar className="h-5 w-5" /> },
   ];
+
+  // Handle URL parameters for pre-filling data
+  const searchParams = useSearchParams();
+  useEffect(() => {
+    const oldFoodId = searchParams.get('oldFoodId');
+    const oldPortion = searchParams.get('oldPortion');
+    
+    if (oldFoodId) {
+      const loadFood = async () => {
+        try {
+          const foods = await getCachedPetFoods();
+          const food = foods.find(f => f.id === oldFoodId);
+          if (food) {
+            setCurrentFood(food);
+          }
+        } catch (error) {
+          console.error('Failed to load current food:', error);
+        }
+      };
+      loadFood();
+    }
+    
+    if (oldPortion) {
+      setCurrentPortion(oldPortion);
+    }
+  }, [searchParams]);
 
   const updateFormData = (updates: { currentPortion?: string; duration?: string }) => {
     if (updates.currentPortion !== undefined) {
